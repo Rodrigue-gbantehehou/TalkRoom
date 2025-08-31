@@ -343,7 +343,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
             {/* App Icon - Desktop */}
             <div className="hidden lg:flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                <i className="fas fa-comments text-xl"></i>
+                <i className="fas fa-bolt text-xl text-yellow-400"></i>
               </div>
             </div>
             
@@ -372,10 +372,10 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
             <div className="flex items-center gap-3">
               <Button
                 onClick={onLeave}
-                className="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg text-sm transition-colors"
+                className="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-3 py-1 rounded-lg text-sm transition-colors"
                 data-testid="button-leave-room"
               >
-                <i className="fas fa-sign-out-alt mr-1"></i>
+                <i className="fas fa-door-open mr-1"></i>
                 <span className="hidden md:inline">Quitter</span>
               </Button>
             </div>
@@ -409,9 +409,9 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
               <h2 className="text-xl font-bold text-white">Menu</h2>
               <Button
                 onClick={() => setShowMenu(false)}
-                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg"
+                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors"
               >
-                <i className="fas fa-times text-white"></i>
+                <i className="fas fa-xmark text-white"></i>
               </Button>
             </div>
 
@@ -419,7 +419,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
             <div className="mb-6">
               <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl p-4">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <i className="fas fa-share-alt"></i>
+                  <i className="fas fa-share-nodes text-blue-300"></i>
                   Partager la salle
                 </h3>
                 <div className="bg-white/20 backdrop-blur rounded-lg p-3 text-sm font-mono mb-3" data-testid="room-code-display">
@@ -431,7 +431,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                     className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
                     data-testid="button-copy-room-code"
                   >
-                    <i className="fas fa-copy mr-2"></i>
+                    <i className="far fa-clipboard mr-2"></i>
                     Copier le code
                   </Button>
                   <Button
@@ -439,7 +439,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                     className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
                     data-testid="button-share-room"
                   >
-                    <i className="fas fa-external-link-alt mr-2"></i>
+                    <i className="fas fa-link mr-2"></i>
                     Partager le lien
                   </Button>
                 </div>
@@ -450,7 +450,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
             <div className="mb-6">
               <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                 <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                  <i className="fas fa-chart-bar"></i>
+                  <i className="fas fa-chart-simple text-purple-400"></i>
                   Statistiques
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
@@ -474,7 +474,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
             <div className="mb-6">
               <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                 <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                  <i className="fas fa-users"></i>
+                  <i className="fas fa-user-group text-green-400"></i>
                   Utilisateurs connectés
                 </h3>
                 <div className="space-y-2" data-testid="users-list">
@@ -505,7 +505,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
               <div className="mb-6">
                 <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                   <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                    <i className="fas fa-cog"></i>
+                    <i className="fas fa-shield-halved text-amber-400"></i>
                     Contrôles Admin
                   </h3>
                   <div className="space-y-2">
@@ -517,7 +517,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                       className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 py-2 px-4 rounded-lg text-sm transition-colors"
                       data-testid="button-clear-messages"
                     >
-                      <i className="fas fa-trash mr-2"></i>
+                      <i className="fas fa-trash-can mr-2"></i>
                       Effacer tous les messages
                     </Button>
                     <Button
@@ -528,7 +528,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                       className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 py-2 px-4 rounded-lg text-sm transition-colors"
                       data-testid="button-export-conversation"
                     >
-                      <i className="fas fa-download mr-2"></i>
+                      <i className="fas fa-file-export mr-2"></i>
                       Exporter la conversation
                     </Button>
                   </div>
@@ -568,7 +568,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
               {/* Room Sharing Section */}
               <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl p-4">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <i className="fas fa-share-alt"></i>
+                  <i className="fas fa-share-nodes text-blue-300"></i>
                   Partager
                 </h3>
                 <div className="bg-white/20 backdrop-blur rounded-lg p-3 text-sm font-mono mb-3" data-testid="room-code-display">
@@ -580,7 +580,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                     className="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg text-sm transition-colors"
                     data-testid="button-copy-room-code"
                   >
-                    <i className="fas fa-copy mr-2"></i>
+                    <i className="far fa-clipboard mr-2"></i>
                     Copier code
                   </Button>
                   <Button
@@ -588,7 +588,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                     className="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg text-sm transition-colors"
                     data-testid="button-share-room"
                   >
-                    <i className="fas fa-external-link-alt mr-2"></i>
+                    <i className="fas fa-link mr-2"></i>
                     Partager lien
                   </Button>
                 </div>
@@ -597,7 +597,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
               {/* Statistics Section */}
               <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                 <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                  <i className="fas fa-chart-bar"></i>
+                  <i className="fas fa-chart-simple text-purple-400"></i>
                   Statistiques
                 </h3>
                 <div className="grid grid-cols-1 gap-3">
@@ -619,7 +619,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
               {/* Users List Section */}
               <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                 <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                  <i className="fas fa-users"></i>
+                  <i className="fas fa-user-group text-green-400"></i>
                   Connectés
                 </h3>
                 <div className="space-y-2" data-testid="users-list">
@@ -647,7 +647,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
               {role === 'admin' && (
                 <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                   <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                    <i className="fas fa-cog"></i>
+                    <i className="fas fa-shield-halved text-amber-400"></i>
                     Admin
                   </h3>
                   <div className="space-y-2">
@@ -656,7 +656,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                       className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 py-2 px-3 rounded-lg text-sm transition-colors"
                       data-testid="button-clear-messages"
                     >
-                      <i className="fas fa-trash mr-2"></i>
+                      <i className="fas fa-trash-can mr-2"></i>
                       Effacer messages
                     </Button>
                     <Button
@@ -664,7 +664,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                       className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 py-2 px-3 rounded-lg text-sm transition-colors"
                       data-testid="button-export-conversation"
                     >
-                      <i className="fas fa-download mr-2"></i>
+                      <i className="fas fa-file-export mr-2"></i>
                       Exporter
                     </Button>
                   </div>
