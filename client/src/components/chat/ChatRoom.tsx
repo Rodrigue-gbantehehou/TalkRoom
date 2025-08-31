@@ -40,6 +40,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
   const { toast } = useToast();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('connecting');
+  const [showMenu, setShowMenu] = useState(false);
   const { encryptMessage, decryptMessage, generateRoomKey, importRoomKey } = useEncryption();
 
   const handleWebSocketMessage = async (data: any) => {
@@ -270,6 +271,49 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
     document.documentElement.classList.toggle('dark');
   };
 
+  const copyRoomCode = async () => {
+    try {
+      await navigator.clipboard.writeText(roomCode);
+      toast({
+        title: "Succès",
+        description: "Code de salle copié dans le presse-papiers !",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de copier le code de salle",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const shareRoom = async () => {
+    const shareUrl = `${window.location.origin}?room=${roomCode}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Rejoignez ma salle de chat',
+          text: `Rejoignez-moi dans la salle ${roomCode}`,
+          url: shareUrl
+        });
+      } catch (error) {
+        // Fallback to copy
+        await navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Lien copié",
+          description: "Le lien de partage a été copié dans le presse-papiers",
+        });
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Lien copié",
+        description: "Le lien de partage a été copié dans le presse-papiers",
+      });
+    }
+  };
+
   const typingText = typingUsers.length > 0 
     ? `${typingUsers.join(', ')} ${typingUsers.length === 1 ? 'est en train' : 'sont en train'} d'écrire...`
     : '';
@@ -281,21 +325,27 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
         {/* Header */}
         <header className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 md:p-6 relative">
           <div className="flex items-center justify-between">
-            {/* App Icon */}
+            {/* Menu Button */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                <i className="fas fa-comments text-xl"></i>
-              </div>
+              <Button
+                onClick={() => setShowMenu(!showMenu)}
+                className="bg-white/20 hover:bg-white/30 p-3 rounded-xl transition-colors"
+                data-testid="button-menu"
+              >
+                <div className="flex flex-col space-y-1 w-5 h-4 justify-center">
+                  <div className="h-0.5 bg-white rounded"></div>
+                  <div className="h-0.5 bg-white rounded"></div>
+                  <div className="h-0.5 bg-white rounded"></div>
+                </div>
+              </Button>
             </div>
             
-            {/* App Title */}
-            <h1 className="text-3xl font-bold text-center">
-              Mini Messagerie
-            </h1>
-            
-            {/* User Info */}
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 text-sm opacity-90" data-testid="current-user-info">
+            {/* App Title & Status */}
+            <div className="text-center">
+              <h1 className="text-2xl md:text-3xl font-bold">
+                Mini Messagerie
+              </h1>
+              <div className="flex items-center justify-center gap-2 text-sm opacity-90 mt-1" data-testid="current-user-info">
                 <div className={`w-2 h-2 rounded-full ${
                   connectionStatus === 'connected' ? 'bg-green-400 animate-pulse-slow' : 
                   connectionStatus === 'connecting' ? 'bg-yellow-400 animate-pulse' :
@@ -309,13 +359,17 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                   'hors ligne'
                 })</span>
               </div>
+            </div>
+            
+            {/* Leave Button */}
+            <div className="flex items-center gap-3">
               <Button
                 onClick={onLeave}
                 className="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg text-sm transition-colors"
                 data-testid="button-leave-room"
               >
                 <i className="fas fa-sign-out-alt mr-1"></i>
-                Quitter
+                <span className="hidden md:inline">Quitter</span>
               </Button>
             </div>
           </div>
@@ -330,12 +384,158 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
           </Button>
         </header>
 
+        {/* Slide Menu Overlay */}
+        {showMenu && (
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            onClick={() => setShowMenu(false)}
+          />
+        )}
+
+        {/* Slide Menu */}
+        <div className={`fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-purple-900 via-slate-900 to-slate-900 transform transition-transform duration-300 ease-in-out z-50 border-r border-white/20 ${
+          showMenu ? 'translate-x-0' : '-translate-x-full'
+        }`}>
+          <div className="p-6">
+            {/* Menu Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">Menu</h2>
+              <Button
+                onClick={() => setShowMenu(false)}
+                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg"
+              >
+                <i className="fas fa-times text-white"></i>
+              </Button>
+            </div>
+
+            {/* Room Sharing Section */}
+            <div className="mb-6">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl p-4">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <i className="fas fa-share-alt"></i>
+                  Partager la salle
+                </h3>
+                <div className="bg-white/20 backdrop-blur rounded-lg p-3 text-sm font-mono mb-3" data-testid="room-code-display">
+                  {roomCode}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    onClick={copyRoomCode}
+                    className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
+                    data-testid="button-copy-room-code"
+                  >
+                    <i className="fas fa-copy mr-2"></i>
+                    Copier le code
+                  </Button>
+                  <Button
+                    onClick={shareRoom}
+                    className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
+                    data-testid="button-share-room"
+                  >
+                    <i className="fas fa-external-link-alt mr-2"></i>
+                    Partager le lien
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Statistics Section */}
+            <div className="mb-6">
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                  <i className="fas fa-chart-bar"></i>
+                  Statistiques
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-purple-400" data-testid="stat-message-count">
+                      {messageCount}
+                    </div>
+                    <div className="text-xs text-white/60">Messages</div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-green-400" data-testid="stat-user-count">
+                      {participants.length}
+                    </div>
+                    <div className="text-xs text-white/60">Utilisateurs</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Users List Section */}
+            <div className="mb-6">
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                  <i className="fas fa-users"></i>
+                  Utilisateurs connectés
+                </h3>
+                <div className="space-y-2" data-testid="users-list">
+                  {participants.map((user) => (
+                    <div 
+                      key={user.id} 
+                      className="flex items-center justify-between p-3 bg-white/10 rounded-lg border-l-4 border-green-400"
+                      data-testid={`user-item-${user.id}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${user.isOnline ? 'bg-green-400 animate-pulse-slow' : 'bg-gray-400'}`}></div>
+                        <span className="font-medium text-white">
+                          {user.id === currentUser?.id ? 'Vous' : user.username}
+                          {user.isOnline && ' (en ligne)'}
+                        </span>
+                      </div>
+                      <span className="text-xs text-white/60 capitalize">
+                        {user.role === 'admin' ? 'Admin' : 'User'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Admin Controls */}
+            {role === 'admin' && (
+              <div className="mb-6">
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                  <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                    <i className="fas fa-cog"></i>
+                    Contrôles Admin
+                  </h3>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={() => {
+                        handleClearMessages();
+                        setShowMenu(false);
+                      }}
+                      className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 py-2 px-4 rounded-lg text-sm transition-colors"
+                      data-testid="button-clear-messages"
+                    >
+                      <i className="fas fa-trash mr-2"></i>
+                      Effacer tous les messages
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        handleExportConversation();
+                        setShowMenu(false);
+                      }}
+                      className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 py-2 px-4 rounded-lg text-sm transition-colors"
+                      data-testid="button-export-conversation"
+                    >
+                      <i className="fas fa-download mr-2"></i>
+                      Exporter la conversation
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Chat Section */}
         <section className="p-3 md:p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 md:gap-6 h-[70vh] md:h-[600px]">
-            
-            {/* Messages Area */}
-            <div className="lg:col-span-3 flex flex-col order-2 lg:order-1">
+          <div className="w-full h-[70vh] md:h-[600px]">
+            {/* Messages Area - Full Width */}
+            <div className="flex flex-col h-full">
               <MessageList 
                 messages={messages} 
                 currentUserId={currentUser?.id || ''} 
@@ -352,25 +552,6 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                 onTypingStop={handleTypingStop}
                 disabled={!isConnected}
               />
-            </div>
-            
-            {/* Sidebar */}
-            <div className="space-y-3 md:space-y-6 order-1 lg:order-2">
-              <RoomInfo
-                roomCode={roomCode}
-                messageCount={messageCount}
-                userCount={participants.length}
-                isAdmin={role === 'admin'}
-                onClearMessages={handleClearMessages}
-                onExportConversation={handleExportConversation}
-              />
-              
-              <div className="lg:block">
-                <UsersList 
-                  participants={participants} 
-                  currentUserId={currentUser?.id || ''} 
-                />
-              </div>
             </div>
           </div>
         </section>
