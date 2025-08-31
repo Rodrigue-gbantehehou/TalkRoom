@@ -1,8 +1,16 @@
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// CORS configuration for Replit environment
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -61,7 +69,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const host = "0.0.0.0";
-  const port = parseInt(process.env.PORT || "4000", 10);
+  const port = parseInt(process.env.PORT || "5000", 10);
 
   server.listen(port, host, () => {
     log(`Serving on http://${host}:${port}`);
