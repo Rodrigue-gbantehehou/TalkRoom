@@ -26,7 +26,14 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
   };
 
   return (
-    <div className="flex-1 bg-white/5 backdrop-blur-sm rounded-2xl p-3 md:p-4 overflow-y-auto space-y-3 md:space-y-4 mb-3 md:mb-4 border border-white/10" data-testid="messages-container">
+    <div 
+      className="flex-1 bg-white/5 backdrop-blur-sm rounded-2xl p-3 md:p-4 overflow-y-auto space-y-3 md:space-y-4 mb-3 md:mb-4 border border-white/10 max-h-[60vh] min-h-[400px] scrollbar-thin scrollbar-track-white/10 scrollbar-thumb-purple-500/50 hover:scrollbar-thumb-purple-500/70" 
+      data-testid="messages-container"
+      style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: 'rgba(168, 85, 247, 0.5) rgba(255, 255, 255, 0.1)'
+      }}
+    >
       {messages.length === 0 && (
         <div className="text-center text-white/70 py-8">
           <i className="fas fa-comments text-4xl mb-4 opacity-50"></i>
