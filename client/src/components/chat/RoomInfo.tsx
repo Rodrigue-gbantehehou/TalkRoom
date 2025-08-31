@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { FaShareAlt,FaCopy,FaExternalLinkAlt,FaEllipsisH,FaCog,FaTrash,FaDownload,FaChartBar    } from "react-icons/fa";
+
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface RoomInfoProps {
@@ -71,7 +73,7 @@ export function RoomInfo({
       {/* Room Sharing */}
       <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl p-4 text-center">
         <h3 className="font-semibold mb-3">
-          <i className="fas fa-share-alt mr-2"></i>
+          <FaShareAlt className="mr-2" />
           Partager la salle
         </h3>
         <div className="bg-white/20 backdrop-blur rounded-lg p-3 text-sm font-mono mb-3" data-testid="room-code-display">
@@ -85,7 +87,7 @@ export function RoomInfo({
             className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
             data-testid="button-copy-room-code"
           >
-            <i className="fas fa-copy mr-1"></i>
+            <FaCopy className="mr-1" />
             Copier le code
           </Button>
           <Button
@@ -93,7 +95,7 @@ export function RoomInfo({
             className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
             data-testid="button-share-room"
           >
-            <i className="fas fa-external-link-alt mr-1"></i>
+            <FaExternalLinkAlt className="mr-1" />
             Partager le lien
           </Button>
         </div>
@@ -103,7 +105,7 @@ export function RoomInfo({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors">
-                <i className="fas fa-ellipsis-h mr-1"></i>
+                <FaEllipsisH className="mr-1" />
                 Options de partage
               </Button>
             </DropdownMenuTrigger>
@@ -124,7 +126,7 @@ export function RoomInfo({
       {/* Room Stats */}
       <div className="bg-muted/50 rounded-2xl p-4">
         <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-          <i className="fas fa-chart-bar"></i>
+          <FaChartBar className="mr-2" />
           Statistiques
         </h3>
         
@@ -148,7 +150,7 @@ export function RoomInfo({
       {isAdmin && (
         <div className="bg-muted/50 rounded-2xl p-4">
           <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <i className="fas fa-cog"></i>
+            <FaCog className="mr-2" />
             Contrôles Admin
           </h3>
           
@@ -158,7 +160,7 @@ export function RoomInfo({
               className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground py-2 px-4 rounded-lg text-sm transition-colors"
               data-testid="button-clear-messages"
             >
-              <i className="fas fa-trash mr-2"></i>
+              <FaTrash className="mr-2" />
               Effacer tous les messages
             </Button>
             
@@ -167,7 +169,7 @@ export function RoomInfo({
               className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground py-2 px-4 rounded-lg text-sm transition-colors"
               data-testid="button-export-conversation"
             >
-              <i className="fas fa-download mr-2"></i>
+              <FaDownload className="mr-2" />
               Exporter la conversation
             </Button>
           </div>

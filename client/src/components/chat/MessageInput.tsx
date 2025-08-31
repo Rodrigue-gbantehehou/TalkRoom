@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { FaPaperPlane } from "react-icons/fa";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
@@ -77,7 +78,7 @@ export function MessageInput({ onSendMessage, onTypingStart, onTypingStop, disab
         className="bg-primary hover:bg-primary/90 text-primary-foreground p-3 rounded-2xl transition-all duration-200 hover:scale-105"
         data-testid="button-send-message"
       >
-        <i className="fas fa-paper-plane"></i>
+        <FaPaperPlane />
       </Button>
     </form>
   );

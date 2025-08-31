@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { FaComments,FaSignInAlt,FaInfoCircle  } from "react-icons/fa";
+
 
 interface LoginFormProps {
   onJoin: (username: string, roomId: string, role: 'user' | 'admin') => void;
@@ -45,10 +47,10 @@ export function LoginForm({ onJoin, isConnecting }: LoginFormProps) {
         <CardContent className="p-8">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-              <i className="fas fa-comments text-3xl text-white"></i>
+              <FaComments className="text-3xl text-white" />
             </div>
             <h1 className="text-4xl font-bold text-white mb-2">
-              Mini Messagerie
+              TalkRoom
             </h1>
             <p className="text-purple-200 text-lg">
               Chat sécurisé et éphémère
@@ -100,7 +102,7 @@ export function LoginForm({ onJoin, isConnecting }: LoginFormProps) {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <i className="fas fa-sign-in-alt"></i>
+                  <FaSignInAlt className="mr-1" />
                   Rejoindre le Chat
                 </div>
               )}
@@ -110,7 +112,7 @@ export function LoginForm({ onJoin, isConnecting }: LoginFormProps) {
           <div className="mt-8 pt-6 border-t border-white/20 text-center">
             <div className="bg-white/5 rounded-2xl p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <i className="fas fa-info-circle text-purple-300"></i>
+                <FaInfoCircle className="text-purple-300" />
                 <span className="text-purple-200 font-medium">Comment ça marche ?</span>
               </div>
               <p className="text-white/70 text-sm leading-relaxed">

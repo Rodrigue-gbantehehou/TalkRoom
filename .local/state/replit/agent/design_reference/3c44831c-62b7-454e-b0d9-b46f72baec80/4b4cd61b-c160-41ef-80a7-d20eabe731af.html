@@ -1,0 +1,548 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Messagerie Éphémère P2P</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                    chart: {
+                        "1": "var(--chart-1)",
+                        "2": "var(--chart-2)",
+                        "3": "var(--chart-3)",
+                        "4": "var(--chart-4)",
+                        "5": "var(--chart-5)",
+                    }
+                },
+                fontFamily: {
+                    sans: ["Inter", "var(--font-sans)"],
+                    serif: ["var(--font-serif)"],
+                    mono: ["var(--font-mono)"],
+                },
+                animation: {
+                    'slide-in': 'slideIn 0.3s ease-out',
+                    'pulse-slow': 'pulse 2s infinite',
+                    'typing': 'typing 1.5s infinite',
+                    'fade-in-out': 'fadeInOut 2s infinite'
+                },
+                keyframes: {
+                    slideIn: {
+                        '0%': { opacity: '0', transform: 'translateY(20px)' },
+                        '100%': { opacity: '1', transform: 'translateY(0)' }
+                    },
+                    typing: {
+                        '0%, 100%': { opacity: '0.5' },
+                        '50%': { opacity: '1' }
+                    },
+                    fadeInOut: {
+                        '0%, 100%': { opacity: '0.5' },
+                        '50%': { opacity: '1' }
+                    }
+                }
+            },
+        }
+    };
+    </script>
+    <style>
+        :root {
+            --background: hsl(210 40% 98%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(243 75% 59%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 84% 4.9%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --destructive: hsl(0 84.2% 60.2%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(243 75% 59%);
+            --radius: 0.75rem;
+            --chart-1: hsl(12 76% 61%);
+            --chart-2: hsl(173 58% 39%);
+            --chart-3: hsl(197 37% 24%);
+            --chart-4: hsl(43 74% 66%);
+            --chart-5: hsl(27 87% 67%);
+        }
+
+        .dark {
+            --background: hsl(222.2 84% 4.9%);
+            --foreground: hsl(210 40% 98%);
+            --card: hsl(222.2 84% 4.9%);
+            --card-foreground: hsl(210 40% 98%);
+            --popover: hsl(222.2 84% 4.9%);
+            --popover-foreground: hsl(210 40% 98%);
+            --primary: hsl(243 75% 59%);
+            --primary-foreground: hsl(222.2 84% 4.9%);
+            --secondary: hsl(217.2 32.6% 17.5%);
+            --secondary-foreground: hsl(210 40% 98%);
+            --muted: hsl(217.2 32.6% 17.5%);
+            --muted-foreground: hsl(215 20.2% 65.1%);
+            --accent: hsl(217.2 32.6% 17.5%);
+            --accent-foreground: hsl(210 40% 98%);
+            --destructive: hsl(0 62.8% 30.6%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(217.2 32.6% 17.5%);
+            --input: hsl(217.2 32.6% 17.5%);
+            --ring: hsl(243 75% 59%);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, hsl(243 75% 59%) 0%, hsl(260 75% 59%) 100%);
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .message-bubble {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: hsl(222.2 84% 4.9%);
+                --foreground: hsl(210 40% 98%);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-700 font-sans">
+    <!-- @COMPONENT: App [Main application container] -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-6xl bg-card/95 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
+            
+            <!-- @COMPONENT: Header [Application header with status and user info] -->
+            <header class="gradient-bg text-primary-foreground p-6 relative">
+                <div class="flex items-center justify-between">
+                    <!-- @COMPONENT: ConnectionStatus [Shows online/offline status] -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse-slow"></div>
+                        <span class="text-sm font-medium" data-bind="connectionStatus">En ligne</span>
+                    </div>
+                    
+                    <!-- @COMPONENT: AppTitle [Main application title] -->
+                    <h1 class="text-3xl font-bold text-center">
+                        <i class="fas fa-comments mr-2"></i>
+                        Mini Messagerie
+                    </h1>
+                    
+                    <!-- @COMPONENT: UserInfo [Current user information] -->
+                    <div class="text-sm opacity-90" data-bind="currentUser.name" data-mock="true">
+                        JohnDoe (Admin)
+                    </div>
+                </div>
+                
+                <!-- @COMPONENT: ThemeToggle [Dark/Light mode toggle] -->
+                <button class="absolute top-4 right-4 p-2 rounded-lg glass-effect hover:bg-white/10 transition-colors" data-event="click:toggleTheme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </header>
+            
+            <!-- @COMPONENT: LoginSection [User authentication and room joining] -->
+            <section class="p-8 text-center" id="loginSection" data-mock="true">
+                <h2 class="text-2xl font-semibold mb-8 text-foreground">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Rejoindre le Chat
+                </h2>
+                
+                <div class="max-w-md mx-auto space-y-6">
+                    <!-- @COMPONENT: UsernameInput [Username input field] -->
+                    <div class="text-left">
+                        <label class="block text-sm font-medium text-muted-foreground mb-2">
+                            Nom d'utilisateur:
+                        </label>
+                        <input 
+                            type="text" 
+                            placeholder="Entrez votre nom" 
+                            maxlength="20"
+                            class="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
+                            data-bind="username"
+                        />
+                    </div>
+                    
+                    <!-- @COMPONENT: RoomInput [Room code input field] -->
+                    <div class="text-left">
+                        <label class="block text-sm font-medium text-muted-foreground mb-2">
+                            Code de la salle:
+                        </label>
+                        <input 
+                            type="text" 
+                            placeholder="Laissez vide pour créer une nouvelle salle"
+                            class="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
+                            data-bind="roomId"
+                        />
+                    </div>
+                    
+                    <!-- @COMPONENT: UserTypeSelect [User role selection] -->
+                    <div class="text-left">
+                        <label class="block text-sm font-medium text-muted-foreground mb-2">
+                            Type d'utilisateur:
+                        </label>
+                        <select 
+                            class="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
+                            data-bind="userType"
+                        >
+                            <option value="user">Utilisateur</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
+                    
+                    <!-- @COMPONENT: JoinButton [Join chat button] -->
+                    <button 
+                        class="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105"
+                        data-event="click:joinChat"
+                        data-implementation="Should validate inputs and establish WebRTC connection"
+                    >
+                        Rejoindre le Chat
+                    </button>
+                </div>
+                
+                <!-- @COMPONENT: HelpSection [Instructions for sharing] -->
+                <div class="mt-8 pt-6 border-t border-border">
+                    <h3 class="text-lg font-semibold text-foreground mb-3">
+                        <i class="fas fa-clipboard mr-2"></i>
+                        Comment partager ?
+                    </h3>
+                    <p class="text-muted-foreground">
+                        Une fois connecté, vous obtiendrez un code de salle à partager avec vos amis !
+                    </p>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: LoginSection -->
+            
+            <!-- @COMPONENT: ChatSection [Main chat interface] -->
+            <section class="p-6 hidden" id="chatSection" data-mock="true">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[600px]">
+                    
+                    <!-- @COMPONENT: MessagesArea [Main messaging area] -->
+                    <div class="lg:col-span-3 flex flex-col">
+                        <!-- @COMPONENT: MessagesContainer [Scrollable messages container] -->
+                        <div class="flex-1 bg-muted/50 rounded-2xl p-4 overflow-y-auto space-y-4 mb-4" data-bind="messages">
+                            
+                            <!-- @COMPONENT: SystemMessage [System notification message] -->
+                            <div class="message-bubble">
+                                <div class="bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mx-auto max-w-sm text-center" data-mock="true">
+                                    <div class="text-xs text-muted-foreground mb-1">Système • Maintenant</div>
+                                    <div class="text-sm">Bienvenue dans la messagerie ! 🎉</div>
+                                </div>
+                            </div>
+                            
+                            <!-- @MAP: messages.map(message => ( -->
+                            <!-- @COMPONENT: OtherMessage [Message from another user] -->
+                            <div class="message-bubble" data-mock="true">
+                                <div class="bg-card border border-border rounded-2xl rounded-tl-md p-4 max-w-xs">
+                                    <div class="text-xs text-muted-foreground mb-1">Alice • 14:32</div>
+                                    <div class="text-foreground">Salut tout le monde ! Comment ça va ? 👋</div>
+                                </div>
+                            </div>
+                            
+                            <!-- @COMPONENT: OwnMessage [User's own message] -->
+                            <div class="message-bubble ml-auto" data-mock="true">
+                                <div class="bg-primary text-primary-foreground rounded-2xl rounded-tr-md p-4 max-w-xs">
+                                    <div class="text-xs opacity-80 mb-1">Vous • 14:33</div>
+                                    <div>Salut ! Tout va bien merci 😊</div>
+                                </div>
+                            </div>
+                            
+                            <!-- @COMPONENT: SystemMessage [User joined notification] -->
+                            <div class="message-bubble" data-mock="true">
+                                <div class="bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mx-auto max-w-sm text-center">
+                                    <div class="text-xs text-muted-foreground mb-1">Système • 14:34</div>
+                                    <div class="text-sm">Bob a rejoint la conversation</div>
+                                </div>
+                            </div>
+                            
+                            <div class="message-bubble" data-mock="true">
+                                <div class="bg-card border border-border rounded-2xl rounded-tl-md p-4 max-w-xs">
+                                    <div class="text-xs text-muted-foreground mb-1">Bob • 14:35</div>
+                                    <div class="text-foreground">Hey ! Je viens d'arriver 🚀</div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                        <!-- @END_COMPONENT: MessagesContainer -->
+                        
+                        <!-- @COMPONENT: TypingIndicator [Shows who is typing] -->
+                        <div class="text-sm text-muted-foreground italic mb-4 h-5 animate-fade-in-out" data-bind="typingUsers" data-mock="true">
+                            Alice est en train d'écrire...
+                        </div>
+                        
+                        <!-- @COMPONENT: MessageForm [Message input form] -->
+                        <div class="flex gap-3">
+                            <input 
+                                type="text" 
+                                placeholder="Tapez votre message..." 
+                                class="flex-1 px-4 py-3 bg-background border-2 border-border rounded-2xl focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
+                                data-event="keypress:handleKeyPress"
+                                data-event="input:handleTyping"
+                                data-bind="messageInput"
+                                data-implementation="Should handle encryption before sending via WebRTC"
+                            />
+                            <button 
+                                class="bg-primary hover:bg-primary/90 text-primary-foreground p-3 rounded-2xl transition-all duration-200 hover:scale-105"
+                                data-event="click:sendMessage"
+                                data-implementation="Should compress and encrypt message before P2P transmission"
+                            >
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <!-- @END_COMPONENT: MessageForm -->
+                    </div>
+                    <!-- @END_COMPONENT: MessagesArea -->
+                    
+                    <!-- @COMPONENT: Sidebar [Users list and room info] -->
+                    <div class="space-y-6">
+                        
+                        <!-- @COMPONENT: RoomSharing [Room code sharing] -->
+                        <div class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-2xl p-4 text-center">
+                            <h3 class="font-semibold mb-2">
+                                <i class="fas fa-share-alt mr-2"></i>
+                                Partager la salle
+                            </h3>
+                            <div class="bg-white/20 backdrop-blur rounded-lg p-3 text-sm font-mono" data-bind="roomCode" data-mock="true">
+                                ROOM-ABC123
+                            </div>
+                            <button 
+                                class="mt-3 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
+                                data-event="click:copyRoomCode"
+                                data-implementation="Should copy room code to clipboard"
+                            >
+                                <i class="fas fa-copy mr-1"></i>
+                                Copier
+                            </button>
+                        </div>
+                        <!-- @END_COMPONENT: RoomSharing -->
+                        
+                        <!-- @COMPONENT: UsersList [List of connected users] -->
+                        <div class="bg-muted/50 rounded-2xl p-4">
+                            <h3 class="font-semibold text-foreground mb-4 flex items-center gap-2">
+                                <i class="fas fa-users"></i>
+                                Utilisateurs connectés
+                            </h3>
+                            
+                            <!-- @MAP: connectedUsers.map(user => ( -->
+                            <div class="space-y-2" data-bind="connectedUsers">
+                                <div class="flex items-center justify-between p-3 bg-card rounded-lg border-l-4 border-green-500" data-mock="true">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <span class="font-medium">Alice</span>
+                                    </div>
+                                    <span class="text-xs text-muted-foreground">Admin</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-card rounded-lg border-l-4 border-green-500" data-mock="true">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <span class="font-medium">Vous</span>
+                                    </div>
+                                    <span class="text-xs text-muted-foreground">User</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-card rounded-lg border-l-4 border-green-500" data-mock="true">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <span class="font-medium">Bob</span>
+                                    </div>
+                                    <span class="text-xs text-muted-foreground">User</span>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                        <!-- @END_COMPONENT: UsersList -->
+                        
+                        <!-- @COMPONENT: RoomStats [Room statistics] -->
+                        <div class="bg-muted/50 rounded-2xl p-4">
+                            <h3 class="font-semibold text-foreground mb-4 flex items-center gap-2">
+                                <i class="fas fa-chart-bar"></i>
+                                Statistiques
+                            </h3>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-card rounded-lg p-3 text-center">
+                                    <div class="text-2xl font-bold text-primary" data-bind="messageCount" data-mock="true">12</div>
+                                    <div class="text-xs text-muted-foreground">Messages</div>
+                                </div>
+                                <div class="bg-card rounded-lg p-3 text-center">
+                                    <div class="text-2xl font-bold text-green-500" data-bind="userCount" data-mock="true">3</div>
+                                    <div class="text-xs text-muted-foreground">Utilisateurs</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: RoomStats -->
+                        
+                        <!-- @COMPONENT: AdminControls [Admin-only controls] -->
+                        <div class="bg-muted/50 rounded-2xl p-4" data-show-if="currentUser.role === 'admin'">
+                            <h3 class="font-semibold text-foreground mb-4 flex items-center gap-2">
+                                <i class="fas fa-cog"></i>
+                                Contrôles Admin
+                            </h3>
+                            
+                            <div class="space-y-2">
+                                <button 
+                                    class="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground py-2 px-4 rounded-lg text-sm transition-colors"
+                                    data-event="click:clearAllMessages"
+                                    data-implementation="Should clear all messages from room"
+                                >
+                                    <i class="fas fa-trash mr-2"></i>
+                                    Effacer tous les messages
+                                </button>
+                                
+                                <button 
+                                    class="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground py-2 px-4 rounded-lg text-sm transition-colors"
+                                    data-event="click:exportConversation"
+                                    data-implementation="Should export conversation to file"
+                                >
+                                    <i class="fas fa-download mr-2"></i>
+                                    Exporter la conversation
+                                </button>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: AdminControls -->
+                        
+                    </div>
+                    <!-- @END_COMPONENT: Sidebar -->
+                    
+                </div>
+            </section>
+            <!-- @END_COMPONENT: ChatSection -->
+            
+        </div>
+    </div>
+    <!-- @END_COMPONENT: App -->
+
+    <!-- @COMPONENT: Notification [Toast notifications] -->
+    <div class="fixed top-4 right-4 z-50 hidden" id="notification" data-bind="notifications">
+        <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg" data-mock="true">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span data-bind="notification.message">Connexion établie avec succès !</span>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: Notification -->
+
+    <script>
+        // @STATE: isConnected:boolean = false
+        // @STATE: currentUser:object = null
+        // @STATE: messages:array = []
+        // @STATE: connectedUsers:array = []
+        // @STATE: roomCode:string = ""
+        // @STATE: typingUsers:array = []
+
+        // @FUNCTIONALITY: WebRTC P2P connection management
+        // TODO: Implement WebRTC DataChannel for P2P messaging
+        // TODO: Implement AES-GCM encryption for messages
+        // TODO: Implement message compression using lz-string or pako
+        // TODO: Implement WebSocket signaling server connection
+        // TODO: Implement ephemeral message storage (memory only)
+        // TODO: Implement typing indicators
+        // TODO: Implement user presence management
+        // TODO: Implement room creation and joining logic
+        // TODO: Implement admin controls for message deletion
+        // TODO: Implement conversation export functionality
+        // TODO: Implement dark/light theme switching
+        // TODO: Implement notification system
+        // TODO: Implement responsive design adjustments
+        // TODO: Implement French language localization
+        // TODO: Implement message limit to prevent memory overload
+
+        (function() {
+            // Mock data for demonstration
+            const mockData = {
+                currentUser: { name: "JohnDoe", role: "admin" },
+                roomCode: "ROOM-ABC123",
+                messageCount: 12,
+                userCount: 3,
+                connectionStatus: "En ligne"
+            };
+
+            // Simple theme toggle functionality
+            function toggleTheme() {
+                document.documentElement.classList.toggle('dark');
+            }
+
+            // Mock login functionality
+            function joinChat() {
+                const loginSection = document.getElementById('loginSection');
+                const chatSection = document.getElementById('chatSection');
+                
+                // Simple validation would go here
+                loginSection.classList.add('hidden');
+                chatSection.classList.remove('hidden');
+                
+                // Show success notification
+                showNotification('Connexion établie avec succès !');
+            }
+
+            // Mock notification system
+            function showNotification(message) {
+                const notification = document.getElementById('notification');
+                notification.classList.remove('hidden');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 3000);
+            }
+
+            // Attach mock functions to window for demo purposes
+            window.toggleTheme = toggleTheme;
+            window.joinChat = joinChat;
+            window.showNotification = showNotification;
+
+            // Initialize demo state
+            console.log('Mini Messagerie P2P initialized with mock data:', mockData);
+        })();
+    </script>
+</body>
+</html>
