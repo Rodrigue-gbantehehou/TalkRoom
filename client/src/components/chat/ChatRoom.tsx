@@ -325,8 +325,8 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
         {/* Header */}
         <header className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 md:p-6 relative">
           <div className="flex items-center justify-between">
-            {/* Menu Button */}
-            <div className="flex items-center gap-3">
+            {/* Menu Button - Mobile Only */}
+            <div className="flex items-center gap-3 lg:hidden">
               <Button
                 onClick={() => setShowMenu(!showMenu)}
                 className="bg-white/20 hover:bg-white/30 p-3 rounded-xl transition-colors"
@@ -338,6 +338,13 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                   <div className="h-0.5 bg-white rounded"></div>
                 </div>
               </Button>
+            </div>
+            
+            {/* App Icon - Desktop */}
+            <div className="hidden lg:flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <i className="fas fa-comments text-xl"></i>
+              </div>
             </div>
             
             {/* App Title & Status */}
@@ -384,16 +391,16 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
           </Button>
         </header>
 
-        {/* Slide Menu Overlay */}
+        {/* Mobile Slide Menu Overlay */}
         {showMenu && (
           <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
             onClick={() => setShowMenu(false)}
           />
         )}
 
-        {/* Slide Menu */}
-        <div className={`fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-purple-900 via-slate-900 to-slate-900 transform transition-transform duration-300 ease-in-out z-50 border-r border-white/20 ${
+        {/* Mobile Slide Menu */}
+        <div className={`fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-purple-900 via-slate-900 to-slate-900 transform transition-transform duration-300 ease-in-out z-50 border-r border-white/20 lg:hidden ${
           showMenu ? 'translate-x-0' : '-translate-x-full'
         }`}>
           <div className="p-6">
@@ -533,9 +540,10 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
 
         {/* Chat Section */}
         <section className="p-3 md:p-6">
-          <div className="w-full h-[70vh] md:h-[600px]">
-            {/* Messages Area - Full Width */}
-            <div className="flex flex-col h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 md:gap-6 h-[70vh] md:h-[600px]">
+            
+            {/* Messages Area - Left Column */}
+            <div className="lg:col-span-3 flex flex-col">
               <MessageList 
                 messages={messages} 
                 currentUserId={currentUser?.id || ''} 
@@ -552,6 +560,116 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                 onTypingStop={handleTypingStop}
                 disabled={!isConnected}
               />
+            </div>
+            
+            {/* Sidebar - Right Column (Desktop Only) */}
+            <div className="hidden lg:block lg:col-span-1 space-y-4 overflow-y-auto">
+              
+              {/* Room Sharing Section */}
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl p-4">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <i className="fas fa-share-alt"></i>
+                  Partager
+                </h3>
+                <div className="bg-white/20 backdrop-blur rounded-lg p-3 text-sm font-mono mb-3" data-testid="room-code-display">
+                  {roomCode}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    onClick={copyRoomCode}
+                    className="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg text-sm transition-colors"
+                    data-testid="button-copy-room-code"
+                  >
+                    <i className="fas fa-copy mr-2"></i>
+                    Copier code
+                  </Button>
+                  <Button
+                    onClick={shareRoom}
+                    className="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg text-sm transition-colors"
+                    data-testid="button-share-room"
+                  >
+                    <i className="fas fa-external-link-alt mr-2"></i>
+                    Partager lien
+                  </Button>
+                </div>
+              </div>
+
+              {/* Statistics Section */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                  <i className="fas fa-chart-bar"></i>
+                  Statistiques
+                </h3>
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-purple-400" data-testid="stat-message-count">
+                      {messageCount}
+                    </div>
+                    <div className="text-xs text-white/60">Messages</div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-green-400" data-testid="stat-user-count">
+                      {participants.length}
+                    </div>
+                    <div className="text-xs text-white/60">Utilisateurs</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Users List Section */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                  <i className="fas fa-users"></i>
+                  Connectés
+                </h3>
+                <div className="space-y-2" data-testid="users-list">
+                  {participants.map((user) => (
+                    <div 
+                      key={user.id} 
+                      className="flex items-center justify-between p-2 bg-white/10 rounded-lg border-l-4 border-green-400"
+                      data-testid={`user-item-${user.id}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${user.isOnline ? 'bg-green-400 animate-pulse-slow' : 'bg-gray-400'}`}></div>
+                        <span className="font-medium text-white text-sm">
+                          {user.id === currentUser?.id ? 'Vous' : user.username}
+                        </span>
+                      </div>
+                      <span className="text-xs text-white/60 capitalize">
+                        {user.role === 'admin' ? 'Admin' : 'User'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Admin Controls */}
+              {role === 'admin' && (
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                  <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                    <i className="fas fa-cog"></i>
+                    Admin
+                  </h3>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={handleClearMessages}
+                      className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 py-2 px-3 rounded-lg text-sm transition-colors"
+                      data-testid="button-clear-messages"
+                    >
+                      <i className="fas fa-trash mr-2"></i>
+                      Effacer messages
+                    </Button>
+                    <Button
+                      onClick={handleExportConversation}
+                      className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 py-2 px-3 rounded-lg text-sm transition-colors"
+                      data-testid="button-export-conversation"
+                    >
+                      <i className="fas fa-download mr-2"></i>
+                      Exporter
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
