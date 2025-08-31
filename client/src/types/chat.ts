@@ -4,7 +4,15 @@ export interface Message {
   senderId: string;
   senderName: string;
   timestamp: number;
-  type: 'user' | 'system';
+  type: 'user' | 'system' | 'image';
+  imageUrl?: string;
+  reactions?: MessageReaction[];
+}
+
+export interface MessageReaction {
+  emoji: string;
+  userId: string;
+  username: string;
 }
 
 export interface ChatUser {
@@ -34,4 +42,5 @@ export interface ChatState {
   participants: ChatUser[];
   typingUsers: string[];
   messageCount: number;
+  roomClosed: boolean;
 }

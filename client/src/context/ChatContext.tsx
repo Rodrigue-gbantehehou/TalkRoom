@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
-import { Message, ChatUser, ChatState } from '@/types/chat';
+import { Message, ChatUser, ChatState, MessageReaction } from '@/types/chat';
+import { SessionStorageService } from '@/lib/sessionStorage';
 
 interface ChatContextType extends ChatState {
   addMessage: (message: Message) => void;
@@ -11,6 +12,8 @@ interface ChatContextType extends ChatState {
   removeTypingUser: (username: string) => void;
   clearMessages: () => void;
   incrementMessageCount: () => void;
+  addReaction: (messageId: string, emoji: string, userId: string, username: string) => void;
+  closeRoom: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -24,7 +27,9 @@ type ChatAction =
   | { type: 'ADD_TYPING_USER'; payload: string }
   | { type: 'REMOVE_TYPING_USER'; payload: string }
   | { type: 'CLEAR_MESSAGES' }
-  | { type: 'INCREMENT_MESSAGE_COUNT' };
+  | { type: 'INCREMENT_MESSAGE_COUNT' }
+  | { type: 'ADD_REACTION'; payload: { messageId: string; reaction: MessageReaction } }
+  | { type: 'CLOSE_ROOM' };
 
 const MAX_MESSAGES = 100; // Limit messages to prevent memory overload
 
@@ -68,6 +73,22 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case 'INCREMENT_MESSAGE_COUNT':
       return { ...state, messageCount: state.messageCount + 1 };
     
+    case 'ADD_REACTION':
+      return {
+        ...state,
+        messages: state.messages.map(message =>
+          message.id === action.payload.messageId
+            ? {
+                ...message,
+                reactions: [...(message.reactions || []), action.payload.reaction]
+              }
+            : message
+        )
+      };
+    
+    case 'CLOSE_ROOM':
+      return { ...state, roomClosed: true };
+    
     default:
       return state;
   }
@@ -80,7 +101,8 @@ const initialState: ChatState = {
   messages: [],
   participants: [],
   typingUsers: [],
-  messageCount: 0
+  messageCount: 0,
+  roomClosed: false
 };
 
 export function ChatProvider({ children }: { children: ReactNode }) {
@@ -123,6 +145,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'INCREMENT_MESSAGE_COUNT' });
   }, []);
 
+  const addReaction = useCallback((messageId: string, emoji: string, userId: string, username: string) => {
+    const reaction: MessageReaction = { emoji, userId, username };
+    dispatch({ type: 'ADD_REACTION', payload: { messageId, reaction } });
+  }, []);
+
+  const closeRoom = useCallback(() => {
+    dispatch({ type: 'CLOSE_ROOM' });
+  }, []);
+
   return (
     <ChatContext.Provider value={{
       ...state,
@@ -134,7 +165,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       addTypingUser,
       removeTypingUser,
       clearMessages,
-      incrementMessageCount
+      incrementMessageCount,
+      addReaction,
+      closeRoom
     }}>
       {children}
     </ChatContext.Provider>

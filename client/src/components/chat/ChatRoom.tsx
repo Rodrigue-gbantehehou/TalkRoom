@@ -29,6 +29,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
     typingUsers,
     messageCount,
     isConnected,
+    roomClosed,
     addMessage,
     updateParticipants,
     setCurrentUser,
@@ -36,7 +37,9 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
     addTypingUser,
     removeTypingUser,
     clearMessages,
-    incrementMessageCount
+    incrementMessageCount,
+    addReaction,
+    closeRoom
   } = useChatContext();
 
   const { toast } = useToast();
@@ -193,7 +196,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
     };
   }, []); // Empty dependency array to avoid reconnection loops
 
-  const handleSendMessage = async (content: string) => {
+  const handleSendMessage = async (content: string, type: 'text' | 'image' = 'text', imageData?: string) => {
     if (!currentUser) return;
 
     const message: Message = {
@@ -202,7 +205,9 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
       senderId: currentUser.id,
       senderName: currentUser.username,
       timestamp: Date.now(),
-      type: 'user'
+      type: type === 'image' ? 'image' : 'user',
+      imageUrl: imageData,
+      reactions: []
     };
 
     // Add to local messages immediately
@@ -552,6 +557,11 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
               <MessageList 
                 messages={messages} 
                 currentUserId={currentUser?.id || ''} 
+                onAddReaction={(messageId, emoji) => {
+                  if (currentUser) {
+                    addReaction(messageId, emoji, currentUser.id, currentUser.username);
+                  }
+                }}
               />
               
               {/* Typing Indicator */}
