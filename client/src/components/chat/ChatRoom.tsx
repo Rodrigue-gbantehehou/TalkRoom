@@ -39,6 +39,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
 
   const { toast } = useToast();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('connecting');
   const { encryptMessage, decryptMessage, generateRoomKey, importRoomKey } = useEncryption();
 
   const handleWebSocketMessage = async (data: any) => {
@@ -138,6 +139,9 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
   const { connect, disconnect, sendMessage: sendWebSocketMessage } = useWebSocket({
     onMessage: handleWebSocketMessage,
     onOpen: () => {
+      console.log('WebSocket opened, joining room...');
+      setConnectionStatus('connected');
+      setIsConnected(true);
       sendWebSocketMessage({
         type: 'join_room',
         username,
@@ -146,14 +150,14 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
       });
     },
     onClose: () => {
+      console.log('WebSocket closed');
+      setConnectionStatus('disconnected');
       setIsConnected(false);
     },
     onError: () => {
-      toast({
-        title: "Erreur de connexion",
-        description: "Impossible de se connecter au serveur",
-        variant: "destructive"
-      });
+      console.log('WebSocket error occurred');
+      setConnectionStatus('error');
+      setIsConnected(false);
     }
   });
 
@@ -179,11 +183,12 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
   });
 
   useEffect(() => {
+    setConnectionStatus('connecting');
     connect();
     return () => {
       disconnect();
     };
-  }, [connect, disconnect]);
+  }, []); // Empty dependency array to avoid reconnection loops
 
   const handleSendMessage = async (content: string) => {
     if (!currentUser) return;
@@ -291,8 +296,18 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
             {/* User Info */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm opacity-90" data-testid="current-user-info">
-                <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400 animate-pulse-slow' : 'bg-red-400'}`}></div>
-                <span>{username} {isConnected ? '(en ligne)' : '(hors ligne)'}</span>
+                <div className={`w-2 h-2 rounded-full ${
+                  connectionStatus === 'connected' ? 'bg-green-400 animate-pulse-slow' : 
+                  connectionStatus === 'connecting' ? 'bg-yellow-400 animate-pulse' :
+                  connectionStatus === 'error' ? 'bg-red-400 animate-pulse' : 
+                  'bg-gray-400'
+                }`}></div>
+                <span>{username} ({
+                  connectionStatus === 'connected' ? 'en ligne' :
+                  connectionStatus === 'connecting' ? 'connexion...' :
+                  connectionStatus === 'error' ? 'erreur de connexion' :
+                  'hors ligne'
+                })</span>
               </div>
               <Button
                 onClick={onLeave}
