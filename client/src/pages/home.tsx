@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { ChatRoom } from '@/components/chat/ChatRoom';
 import { ChatProvider } from '@/context/ChatContext';
@@ -11,7 +11,21 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState<'user' | 'admin'>('user');
   const [isConnecting, setIsConnecting] = useState(false);
+  const [prefilledRoomCode, setPrefilledRoomCode] = useState('');
   const { toast } = useToast();
+
+  // Extraire le code de salle depuis l'URL au chargement
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomFromUrl = urlParams.get('room');
+    if (roomFromUrl) {
+      setPrefilledRoomCode(roomFromUrl);
+      toast({
+        title: "Salle détectée",
+        description: `Vous rejoignez la salle ${roomFromUrl}. Entrez votre nom pour continuer.`,
+      });
+    }
+  }, [toast]);
 
   const handleJoin = async (enteredUsername: string, enteredRoomId: string, enteredRole: 'user' | 'admin') => {
     setIsConnecting(true);
@@ -74,6 +88,7 @@ export default function Home() {
       <LoginForm 
         onJoin={handleJoin} 
         isConnecting={isConnecting}
+        prefilledRoomCode={prefilledRoomCode}
       />
     );
   }

@@ -174,6 +174,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
             break;
           }
+
+          case 'delete_message': {
+            const client = connectedClients.get(clientId!);
+            if (client) {
+              broadcastToRoom(client.roomId, {
+                type: 'delete_message',
+                messageId: message.messageId,
+                timestamp: Date.now()
+              });
+            }
+            break;
+          }
         }
       } catch (error) {
         console.error('WebSocket message error:', error);

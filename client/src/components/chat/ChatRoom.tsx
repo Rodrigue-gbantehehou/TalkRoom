@@ -11,7 +11,8 @@ import { CompressionService } from '@/lib/compression';
 import { Message } from '@/types/chat';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { FaBolt, FaTimes, FaShare, FaFileExport, FaTrash, FaShieldAlt, FaUsers, FaChartBar, FaLink, FaClipboard, FaShareAlt, FaDoorOpen, FaSun, FaMoon, FaComments } from "react-icons/fa";
+import { SessionStorageService } from '@/lib/sessionStorage';
+import { FaBolt, FaTimes, FaShare, FaFileExport, FaTrash, FaShieldAlt, FaUsers, FaChartBar, FaLink, FaClipboard, FaShareAlt, FaDoorOpen, FaSun, FaMoon, FaComments, FaBan } from "react-icons/fa";
 
 
 interface ChatRoomProps {
@@ -138,6 +139,13 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
           description: data.message,
           variant: "destructive"
         });
+        break;
+
+      case 'delete_message':
+        if (data.messageId) {
+          // Remove from local state - this will be handled by the MessageList component
+          // No need to filter here as we use the context
+        }
         break;
     }
   };
@@ -270,6 +278,32 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
     toast({
       title: "Succès",
       description: "Conversation exportée avec succès !",
+    });
+  };
+
+  const handleCloseRoom = () => {
+    closeRoom();
+    toast({
+      title: "Salle clôturée",
+      description: "La salle a été fermée. Les nouveaux utilisateurs ne peuvent plus rejoindre.",
+      variant: "destructive"
+    });
+  };
+
+  const handleDeleteMessage = (messageId: string) => {
+    // Remove from local state
+    setMessages(prevMessages => 
+      prevMessages.filter(msg => msg.id !== messageId)
+    );
+    
+    // Remove from session storage
+    SessionStorageService.removeMessage(messageId);
+    
+    // Broadcast deletion to other users
+    sendWebSocketMessage({
+      type: 'delete_message',
+      messageId,
+      timestamp: Date.now()
     });
   };
 
@@ -541,6 +575,17 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                       <FaFileExport className="mr-2" />
                       Exporter la conversation
                     </Button>
+                    <Button
+                      onClick={() => {
+                        handleCloseRoom();
+                        setShowMenu(false);
+                      }}
+                      className="w-full bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/30 py-2 px-4 rounded-lg text-sm transition-colors"
+                      data-testid="button-close-room"
+                    >
+                      <FaBan className="mr-2" />
+                      Clôturer la salle
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -562,6 +607,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                     addReaction(messageId, emoji, currentUser.id, currentUser.username);
                   }
                 }}
+                onDeleteMessage={handleDeleteMessage}
               />
               
               {/* Typing Indicator */}

@@ -3,17 +3,23 @@ import { Message } from '@/types/chat';
 import { useChatContext } from '@/context/ChatContext';
 import { EmojiPicker } from '@/components/ui/emoji-picker';
 import { Button } from '@/components/ui/button';
-import { FaSmile } from 'react-icons/fa';
+import { FaSmile, FaTrash } from 'react-icons/fa';
+import { ImageModal } from '@/components/ui/image-modal';
+import { useToast } from '@/hooks/use-toast';
 
 interface MessageListProps {
   messages: Message[];
   currentUserId: string;
   onAddReaction: (messageId: string, emoji: string) => void;
+  onDeleteMessage?: (messageId: string) => void;
 }
 
-export function MessageList({ messages, currentUserId, onAddReaction }: MessageListProps) {
+export function MessageList({ messages, currentUserId, onAddReaction, onDeleteMessage }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState<string | null>(null);
+  const [showImageModal, setShowImageModal] = useState<{ url: string; messageId: string } | null>(null);
+  const context = useChatContext();
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -28,6 +34,20 @@ export function MessageList({ messages, currentUserId, onAddReaction }: MessageL
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const handleImageClick = (url: string, messageId: string) => {
+    setShowImageModal({ url, messageId });
+  };
+
+  const handleDeleteMessage = (messageId: string) => {
+    if (onDeleteMessage) {
+      onDeleteMessage(messageId);
+      toast({
+        title: "Message supprimé",
+        description: "Le message a été supprimé avec succès.",
+      });
+    }
   };
 
   return (
@@ -62,13 +82,20 @@ export function MessageList({ messages, currentUserId, onAddReaction }: MessageL
                   Vous • {formatTime(message.timestamp)}
                 </div>
                 {message.type === 'image' && message.imageUrl && (
-                  <div className="mb-2">
+                  <div className="mb-2 relative group">
                     <img 
                       src={message.imageUrl} 
                       alt="Image partagée" 
                       className="max-w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => window.open(message.imageUrl, '_blank')}
+                      onClick={() => handleImageClick(message.imageUrl!, message.id)}
                     />
+                    <Button
+                      onClick={() => handleDeleteMessage(message.id)}
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-0 transition-all opacity-0 group-hover:opacity-100"
+                      title="Supprimer l'image"
+                    >
+                      <FaTrash className="text-xs" />
+                    </Button>
                   </div>
                 )}
                 <div className="text-sm md:text-base">{message.content}</div>
@@ -97,13 +124,20 @@ export function MessageList({ messages, currentUserId, onAddReaction }: MessageL
                   {message.senderName} • {formatTime(message.timestamp)}
                 </div>
                 {message.type === 'image' && message.imageUrl && (
-                  <div className="mb-2">
+                  <div className="mb-2 relative group">
                     <img 
                       src={message.imageUrl} 
                       alt="Image partagée" 
                       className="max-w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => window.open(message.imageUrl, '_blank')}
+                      onClick={() => handleImageClick(message.imageUrl!, message.id)}
                     />
+                    <Button
+                      onClick={() => handleDeleteMessage(message.id)}
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-0 transition-all opacity-0 group-hover:opacity-100"
+                      title="Supprimer l'image"
+                    >
+                      <FaTrash className="text-xs" />
+                    </Button>
                   </div>
                 )}
                 <div className="text-white text-sm md:text-base">{message.content}</div>
@@ -141,6 +175,20 @@ export function MessageList({ messages, currentUserId, onAddReaction }: MessageL
         </div>
       ))}
       <div ref={messagesEndRef} />
+
+      {/* Modal d'image */}
+      {showImageModal && (
+        <ImageModal
+          isOpen={true}
+          imageUrl={showImageModal.url}
+          onClose={() => setShowImageModal(null)}
+          onDelete={() => {
+            handleDeleteMessage(showImageModal.messageId);
+            setShowImageModal(null);
+          }}
+          canDelete={true}
+        />
+      )}
     </div>
   );
 }

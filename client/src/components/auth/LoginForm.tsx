@@ -10,11 +10,12 @@ import { FaComments,FaSignInAlt,FaInfoCircle  } from "react-icons/fa";
 interface LoginFormProps {
   onJoin: (username: string, roomId: string, role: 'user' | 'admin') => void;
   isConnecting?: boolean;
+  prefilledRoomCode?: string;
 }
 
-export function LoginForm({ onJoin, isConnecting }: LoginFormProps) {
+export function LoginForm({ onJoin, isConnecting, prefilledRoomCode }: LoginFormProps) {
   const [username, setUsername] = useState('');
-  const [roomId, setRoomId] = useState('');
+  const [roomId, setRoomId] = useState(prefilledRoomCode || '');
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
