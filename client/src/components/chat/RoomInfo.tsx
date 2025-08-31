@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface RoomInfoProps {
   roomCode: string;
@@ -19,6 +21,7 @@ export function RoomInfo({
   onExportConversation 
 }: RoomInfoProps) {
   const { toast } = useToast();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const copyRoomCode = async () => {
     try {
@@ -36,25 +39,86 @@ export function RoomInfo({
     }
   };
 
+  const shareRoom = async () => {
+    const shareUrl = `${window.location.origin}?room=${roomCode}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Rejoignez ma salle de chat',
+          text: `Rejoignez-moi dans la salle ${roomCode}`,
+          url: shareUrl
+        });
+      } catch (error) {
+        // Fallback to copy
+        await navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Lien copié",
+          description: "Le lien de partage a été copié dans le presse-papiers",
+        });
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Lien copié",
+        description: "Le lien de partage a été copié dans le presse-papiers",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Room Sharing */}
-      <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-2xl p-4 text-center">
-        <h3 className="font-semibold mb-2">
+      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl p-4 text-center">
+        <h3 className="font-semibold mb-3">
           <i className="fas fa-share-alt mr-2"></i>
           Partager la salle
         </h3>
-        <div className="bg-white/20 backdrop-blur rounded-lg p-3 text-sm font-mono" data-testid="room-code-display">
+        <div className="bg-white/20 backdrop-blur rounded-lg p-3 text-sm font-mono mb-3" data-testid="room-code-display">
           {roomCode}
         </div>
-        <Button
-          onClick={copyRoomCode}
-          className="mt-3 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
-          data-testid="button-copy-room-code"
-        >
-          <i className="fas fa-copy mr-1"></i>
-          Copier
-        </Button>
+        
+        {/* Desktop buttons */}
+        <div className="hidden md:flex gap-2 justify-center">
+          <Button
+            onClick={copyRoomCode}
+            className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
+            data-testid="button-copy-room-code"
+          >
+            <i className="fas fa-copy mr-1"></i>
+            Copier le code
+          </Button>
+          <Button
+            onClick={shareRoom}
+            className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors"
+            data-testid="button-share-room"
+          >
+            <i className="fas fa-external-link-alt mr-1"></i>
+            Partager le lien
+          </Button>
+        </div>
+        
+        {/* Mobile dropdown menu */}
+        <div className="md:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition-colors">
+                <i className="fas fa-ellipsis-h mr-1"></i>
+                Options de partage
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48">
+              <DropdownMenuItem onClick={copyRoomCode}>
+                <i className="fas fa-copy mr-2"></i>
+                Copier le code
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={shareRoom}>
+                <i className="fas fa-external-link-alt mr-2"></i>
+                Partager le lien
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Room Stats */}

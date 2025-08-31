@@ -159,7 +159,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 type: message.type,
                 username: client.username,
                 userId: client.userId
-              }, clientId);
+              }, clientId!);
+            }
+            break;
+          }
+
+          case 'broadcast_message': {
+            const client = connectedClients.get(clientId!);
+            if (client) {
+              broadcastToRoom(client.roomId, {
+                type: 'message_received',
+                message: message.message
+              }, clientId!);
             }
             break;
           }

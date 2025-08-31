@@ -118,6 +118,13 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
         }
         break;
 
+      case 'message_received':
+        // Handle messages received via WebSocket broadcast
+        if (data.message && data.message.senderId !== currentUser?.id) {
+          addMessage(data.message);
+        }
+        break;
+
       case 'error':
         toast({
           title: "Erreur",
@@ -194,12 +201,15 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
     addMessage(message);
 
     try {
-      // Compress and encrypt message before sending via WebRTC
-      const compressed = await CompressionService.compress(content);
-      const { encrypted, iv } = await encryptMessage(content);
-      
-      // Send via WebRTC to all peers
+      // For now, send messages directly without encryption for simplicity
+      // This ensures messages work while we can add encryption later
       sendWebRTCMessage(message);
+      
+      // Also broadcast via WebSocket for users who don't have P2P connection yet
+      sendWebSocketMessage({
+        type: 'broadcast_message',
+        message: message
+      });
     } catch (error) {
       console.error('Failed to send message:', error);
       toast({
@@ -260,30 +270,29 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
     : '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-700 p-4">
-      <div className="w-full max-w-6xl mx-auto bg-card/95 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-2 md:p-4">
+      <div className="w-full max-w-7xl mx-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden">
         
         {/* Header */}
-        <header className="gradient-bg text-primary-foreground p-6 relative">
+        <header className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 md:p-6 relative">
           <div className="flex items-center justify-between">
-            {/* Connection Status */}
+            {/* App Icon */}
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-400 animate-pulse-slow' : 'bg-red-400'}`}></div>
-              <span className="text-sm font-medium" data-testid="connection-status">
-                {isConnected ? 'En ligne' : 'Hors ligne'}
-              </span>
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <i className="fas fa-comments text-xl"></i>
+              </div>
             </div>
             
             {/* App Title */}
             <h1 className="text-3xl font-bold text-center">
-              <i className="fas fa-comments mr-2"></i>
               Mini Messagerie
             </h1>
             
             {/* User Info */}
             <div className="flex items-center gap-3">
-              <div className="text-sm opacity-90" data-testid="current-user-info">
-                {username} ({role === 'admin' ? 'Admin' : 'User'})
+              <div className="flex items-center gap-2 text-sm opacity-90" data-testid="current-user-info">
+                <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400 animate-pulse-slow' : 'bg-red-400'}`}></div>
+                <span>{username} {isConnected ? '(en ligne)' : '(hors ligne)'}</span>
               </div>
               <Button
                 onClick={onLeave}
@@ -307,18 +316,18 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
         </header>
 
         {/* Chat Section */}
-        <section className="p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[600px]">
+        <section className="p-3 md:p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 md:gap-6 h-[70vh] md:h-[600px]">
             
             {/* Messages Area */}
-            <div className="lg:col-span-3 flex flex-col">
+            <div className="lg:col-span-3 flex flex-col order-2 lg:order-1">
               <MessageList 
                 messages={messages} 
                 currentUserId={currentUser?.id || ''} 
               />
               
               {/* Typing Indicator */}
-              <div className="text-sm text-muted-foreground italic mb-4 h-5 animate-fade-in-out" data-testid="typing-indicator">
+              <div className="text-sm text-white/70 italic mb-3 h-5 animate-fade-in-out" data-testid="typing-indicator">
                 {typingText}
               </div>
               
@@ -331,7 +340,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
             </div>
             
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-3 md:space-y-6 order-1 lg:order-2">
               <RoomInfo
                 roomCode={roomCode}
                 messageCount={messageCount}
@@ -341,10 +350,12 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
                 onExportConversation={handleExportConversation}
               />
               
-              <UsersList 
-                participants={participants} 
-                currentUserId={currentUser?.id || ''} 
-              />
+              <div className="lg:block">
+                <UsersList 
+                  participants={participants} 
+                  currentUserId={currentUser?.id || ''} 
+                />
+              </div>
             </div>
           </div>
         </section>

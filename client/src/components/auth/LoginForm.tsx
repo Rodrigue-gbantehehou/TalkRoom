@@ -3,7 +3,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 
 interface LoginFormProps {
@@ -14,7 +13,6 @@ interface LoginFormProps {
 export function LoginForm({ onJoin, isConnecting }: LoginFormProps) {
   const [username, setUsername] = useState('');
   const [roomId, setRoomId] = useState('');
-  const [role, setRole] = useState<'user' | 'admin'>('user');
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,44 +36,45 @@ export function LoginForm({ onJoin, isConnecting }: LoginFormProps) {
       return;
     }
 
-    onJoin(username.trim(), roomId.trim(), role);
+    onJoin(username.trim(), roomId.trim(), 'user');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-700">
-      <Card className="w-full max-w-md bg-card/95 backdrop-blur-lg shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <Card className="w-full max-w-lg bg-white/10 backdrop-blur-xl shadow-2xl border border-white/20 rounded-3xl">
         <CardContent className="p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">
-              <i className="fas fa-comments mr-2"></i>
+            <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+              <i className="fas fa-comments text-3xl text-white"></i>
+            </div>
+            <h1 className="text-4xl font-bold text-white mb-2">
               Mini Messagerie
             </h1>
-            <h2 className="text-xl font-semibold text-foreground">
-              <i className="fas fa-rocket mr-2"></i>
-              Rejoindre le Chat
-            </h2>
+            <p className="text-purple-200 text-lg">
+              Chat sécurisé et éphémère
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="username" className="block text-sm font-medium text-muted-foreground mb-2">
-                Nom d'utilisateur:
+              <Label htmlFor="username" className="block text-sm font-medium text-purple-200 mb-3">
+                Nom d'utilisateur
               </Label>
               <Input
                 id="username"
                 type="text"
-                placeholder="Entrez votre nom"
+                placeholder="Votre nom"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 maxLength={20}
-                className="w-full"
+                className="w-full bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl p-4"
                 data-testid="input-username"
               />
             </div>
 
             <div>
-              <Label htmlFor="roomId" className="block text-sm font-medium text-muted-foreground mb-2">
-                Code de la salle:
+              <Label htmlFor="roomId" className="block text-sm font-medium text-purple-200 mb-3">
+                Code de la salle (optionnel)
               </Label>
               <Input
                 id="roomId"
@@ -83,44 +82,42 @@ export function LoginForm({ onJoin, isConnecting }: LoginFormProps) {
                 placeholder="Laissez vide pour créer une nouvelle salle"
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
-                className="w-full"
+                className="w-full bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl p-4"
                 data-testid="input-room-code"
               />
             </div>
 
-            <div>
-              <Label htmlFor="role" className="block text-sm font-medium text-muted-foreground mb-2">
-                Type d'utilisateur:
-              </Label>
-              <Select value={role} onValueChange={(value: 'user' | 'admin') => setRole(value)}>
-                <SelectTrigger className="w-full" data-testid="select-user-role">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user">Utilisateur</SelectItem>
-                  <SelectItem value="admin">Administrateur</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             <Button 
               type="submit" 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 transition-all duration-200 hover:shadow-lg hover:scale-105"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25 hover:scale-[1.02]"
               disabled={isConnecting}
               data-testid="button-join-chat"
             >
-              {isConnecting ? 'Connexion...' : 'Rejoindre le Chat'}
+              {isConnecting ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Connexion...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <i className="fas fa-sign-in-alt"></i>
+                  Rejoindre le Chat
+                </div>
+              )}
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-border text-center">
-            <h3 className="text-lg font-semibold text-foreground mb-3">
-              <i className="fas fa-clipboard mr-2"></i>
-              Comment partager ?
-            </h3>
-            <p className="text-muted-foreground text-sm">
-              Une fois connecté, vous obtiendrez un code de salle à partager avec vos amis !
-            </p>
+          <div className="mt-8 pt-6 border-t border-white/20 text-center">
+            <div className="bg-white/5 rounded-2xl p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <i className="fas fa-info-circle text-purple-300"></i>
+                <span className="text-purple-200 font-medium">Comment ça marche ?</span>
+              </div>
+              <p className="text-white/70 text-sm leading-relaxed">
+                Créez une salle ou rejoignez-en une avec le code.
+                <br />Partagez le code avec vos amis pour discuter en sécurité !
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>

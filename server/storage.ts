@@ -51,6 +51,7 @@ export class MemStorage implements IStorage {
   async createRoom(insertRoom: InsertRoom): Promise<Room> {
     const room: Room = { 
       ...insertRoom, 
+      name: insertRoom.name || null,
       createdAt: new Date(),
       isActive: true 
     };
@@ -77,6 +78,7 @@ export class MemStorage implements IStorage {
     const participant: RoomParticipant = { 
       ...insertParticipant, 
       id,
+      role: insertParticipant.role || 'user',
       joinedAt: new Date() 
     };
     this.roomParticipants.set(id, participant);
