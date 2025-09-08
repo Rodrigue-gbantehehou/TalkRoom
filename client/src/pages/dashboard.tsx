@@ -360,6 +360,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
           onSelectConversation={handleJoinRoom}
           onCreateRoom={() => setShowCreateDialog(true)}
           onJoinRoom={() => setShowJoinDialog(true)}
+          onShareRoom={copyRoomLink}
           currentUser={currentUser}
         />
       </div>

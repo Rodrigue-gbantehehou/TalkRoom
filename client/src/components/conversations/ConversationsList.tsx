@@ -10,7 +10,9 @@ import {
   Users, 
   Lock, 
   Globe,
-  MessageCircle 
+  MessageCircle,
+  Share,
+  Copy 
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -36,6 +38,7 @@ interface ConversationsListProps {
   onSelectConversation: (id: string) => void;
   onCreateRoom: () => void;
   onJoinRoom?: () => void;
+  onShareRoom?: (roomId: string) => void;
   currentUser: { username: string };
 }
 
@@ -44,6 +47,7 @@ export function ConversationsList({
   onSelectConversation, 
   onCreateRoom, 
   onJoinRoom,
+  onShareRoom,
   currentUser 
 }: ConversationsListProps) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -177,11 +181,28 @@ export function ConversationsList({
                           </span>
                         </div>
                       </div>
-                      {conversation.unreadCount > 0 && (
-                        <Badge className="bg-emerald-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center">
-                          {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
-                        </Badge>
-                      )}
+                      <div className="flex items-center space-x-2">
+                        {/* Share button */}
+                        {onShareRoom && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onShareRoom(conversation.id);
+                            }}
+                            className="h-6 w-6 p-0 opacity-60 hover:opacity-100 transition-opacity"
+                            data-testid={`button-share-${conversation.id}`}
+                          >
+                            <Share className="w-3 h-3" />
+                          </Button>
+                        )}
+                        {conversation.unreadCount > 0 && (
+                          <Badge className="bg-emerald-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center">
+                            {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
 
                     {/* Last message */}
