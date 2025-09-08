@@ -35,6 +35,7 @@ interface ConversationsListProps {
   conversations: Conversation[];
   onSelectConversation: (id: string) => void;
   onCreateRoom: () => void;
+  onJoinRoom?: () => void;
   currentUser: { username: string };
 }
 
@@ -42,6 +43,7 @@ export function ConversationsList({
   conversations, 
   onSelectConversation, 
   onCreateRoom, 
+  onJoinRoom,
   currentUser 
 }: ConversationsListProps) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -80,15 +82,27 @@ export function ConversationsList({
               <p className="text-sm text-emerald-100">@{currentUser.username}</p>
             </div>
           </div>
-          <Button
-            onClick={onCreateRoom}
-            size="sm"
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-            data-testid="button-create-room"
-          >
-            <Plus className="w-4 h-4 mr-1" />
-            Nouvelle Room
-          </Button>
+          <div className="flex space-x-2">
+            <Button
+              onClick={onCreateRoom}
+              size="sm"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              data-testid="button-create-room"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Créer
+            </Button>
+            {onJoinRoom && (
+              <Button
+                onClick={onJoinRoom}
+                size="sm"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                data-testid="button-join-room"
+              >
+                Rejoindre
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Search */}

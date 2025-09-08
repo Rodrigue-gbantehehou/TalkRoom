@@ -38,6 +38,8 @@ interface DashboardProps {
 export function Dashboard({ currentUser, onLogout }: DashboardProps) {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showJoinDialog, setShowJoinDialog] = useState(false);
+  const [joinRoomCode, setJoinRoomCode] = useState('');
   const [conversations, setConversations] = useState<Conversation[]>([
     {
       id: 'DEMO123',
@@ -59,6 +61,57 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
     type: 'public' as 'public' | 'private'
   });
   const { toast } = useToast();
+
+  const handleJoinRoomByCode = async () => {
+    if (!joinRoomCode.trim()) {
+      toast({
+        title: "Code requis",
+        description: "Veuillez entrer le code de la room",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/rooms/${joinRoomCode.trim()}`);
+      if (!response.ok) {
+        throw new Error('Room introuvable');
+      }
+      
+      const room = await response.json();
+      
+      // Ajouter à la liste des conversations si pas déjà présente
+      const exists = conversations.find(c => c.id === room.id);
+      if (!exists) {
+        const newConversation = {
+          id: room.id,
+          name: room.name,
+          type: room.type,
+          participantCount: 1,
+          onlineCount: 1,
+          lastMessage: null,
+          unreadCount: 0
+        };
+        setConversations(prev => [newConversation, ...prev]);
+      }
+
+      // Rejoindre automatiquement la room
+      setSelectedConversationId(room.id);
+      setJoinRoomCode('');
+      setShowJoinDialog(false);
+      
+      toast({
+        title: "Room rejoint !",
+        description: `Vous avez rejoint "${room.name}"`,
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de rejoindre cette room. Vérifiez le code.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleCreateRoom = async () => {
     if (!newRoom.name.trim()) {
@@ -245,6 +298,52 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Join Room Dialog */}
+        <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <ExternalLink className="w-5 h-5 text-emerald-500" />
+                <span>Rejoindre une room</span>
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div>
+                <Label className="text-sm font-medium">Code de la room</Label>
+                <Input
+                  value={joinRoomCode}
+                  onChange={(e) => setJoinRoomCode(e.target.value.toUpperCase())}
+                  placeholder="Ex: ABC123"
+                  className="mt-2"
+                  onKeyPress={(e) => e.key === 'Enter' && handleJoinRoomByCode()}
+                  data-testid="input-join-room-code"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Entrez le code de 6 caractères de la room
+                </p>
+              </div>
+
+              <div className="flex space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowJoinDialog(false)}
+                  className="flex-1"
+                >
+                  Annuler
+                </Button>
+                <Button
+                  onClick={handleJoinRoomByCode}
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+                  disabled={!joinRoomCode.trim()}
+                  data-testid="button-join-room-confirm"
+                >
+                  Rejoindre
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -260,6 +359,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
           conversations={conversations}
           onSelectConversation={handleJoinRoom}
           onCreateRoom={() => setShowCreateDialog(true)}
+          onJoinRoom={() => setShowJoinDialog(true)}
           currentUser={currentUser}
         />
       </div>
