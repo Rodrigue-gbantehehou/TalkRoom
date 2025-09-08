@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ConversationsList } from '@/components/conversations/ConversationsList';
-import { ChatRoom } from '@/components/chat/ChatRoom';
+import { SimpleChatRoom } from '@/components/chat/SimpleChatRoom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -267,14 +267,13 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
       {/* Chat Room */}
       <div className="flex-1">
         {selectedConversation && (
-          <ChatProvider>
-            <ChatRoom
-              roomCode={selectedConversation.id}
-              username={currentUser.username}
-              role="user"
-              onLeave={() => setSelectedConversationId(null)}
-            />
-          </ChatProvider>
+          <SimpleChatRoom
+            roomCode={selectedConversation.id}
+            roomName={selectedConversation.name}
+            currentUser={currentUser}
+            onBack={() => setSelectedConversationId(null)}
+            onCopyLink={() => copyRoomLink(selectedConversation.id)}
+          />
         )}
       </div>
 
