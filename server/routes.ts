@@ -46,6 +46,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Message routes
+  app.get('/api/rooms/:id/messages', async (req, res) => {
+    try {
+      const room = await storage.getRoom(req.params.id);
+      if (!room) {
+        return res.status(404).json({ error: 'Room not found' });
+      }
+      
+      const messages = await storage.getRoomMessages(req.params.id);
+      res.json(messages);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to get messages' });
+    }
+  });
+
+  app.post('/api/rooms/:id/messages', async (req, res) => {
+    try {
+      const room = await storage.getRoom(req.params.id);
+      if (!room) {
+        return res.status(404).json({ error: 'Room not found' });
+      }
+
+      const message = await storage.createMessage({
+        content: req.body.content,
+        senderId: req.body.senderId,
+        senderName: req.body.senderName,
+        roomId: req.params.id,
+        type: req.body.type || 'user',
+        imageUrl: req.body.imageUrl
+      });
+      
+      res.json(message);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to create message' });
+    }
+  });
+
   // WebSocket handling
   wss.on('connection', (ws: WebSocket) => {
     let clientId: string | null = null;
@@ -167,9 +204,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           case 'broadcast_message': {
             const client = connectedClients.get(clientId!);
             if (client) {
+              // Save message to database
+              const savedMessage = await storage.createMessage({
+                content: message.message.content,
+                senderId: client.userId,
+                senderName: client.username,
+                roomId: client.roomId,
+                type: message.message.type || 'user',
+                imageUrl: message.message.imageUrl
+              });
+
               broadcastToRoom(client.roomId, {
                 type: 'message_received',
-                message: message.message
+                message: {
+                  id: savedMessage.id,
+                  content: savedMessage.content,
+                  senderId: savedMessage.senderId,
+                  senderName: savedMessage.senderName,
+                  timestamp: savedMessage.timestamp?.getTime() || Date.now(),
+                  type: savedMessage.type,
+                  imageUrl: savedMessage.imageUrl
+                }
               }, clientId!);
             }
             break;

@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Room, type InsertRoom, type RoomParticipant, type InsertRoomParticipant } from "@shared/schema";
+import { type User, type InsertUser, type Room, type InsertRoom, type RoomParticipant, type InsertRoomParticipant, type StoredMessage, type InsertMessage } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -14,17 +14,23 @@ export interface IStorage {
   addRoomParticipant(participant: InsertRoomParticipant): Promise<RoomParticipant>;
   removeRoomParticipant(roomId: string, userId: string): Promise<void>;
   getRoomParticipant(roomId: string, userId: string): Promise<RoomParticipant | undefined>;
+  
+  getRoomMessages(roomId: string): Promise<StoredMessage[]>;
+  createMessage(message: InsertMessage): Promise<StoredMessage>;
+  deleteMessage(id: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private rooms: Map<string, Room>;
   private roomParticipants: Map<string, RoomParticipant>;
+  private messages: Map<string, StoredMessage>;
 
   constructor() {
     this.users = new Map();
     this.rooms = new Map();
     this.roomParticipants = new Map();
+    this.messages = new Map();
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -100,6 +106,29 @@ export class MemStorage implements IStorage {
     return Array.from(this.roomParticipants.values()).find(
       (participant) => participant.roomId === roomId && participant.userId === userId,
     );
+  }
+
+  async getRoomMessages(roomId: string): Promise<StoredMessage[]> {
+    return Array.from(this.messages.values())
+      .filter((message) => message.roomId === roomId)
+      .sort((a, b) => (a.timestamp?.getTime() || 0) - (b.timestamp?.getTime() || 0));
+  }
+
+  async createMessage(insertMessage: InsertMessage): Promise<StoredMessage> {
+    const id = randomUUID();
+    const message: StoredMessage = { 
+      ...insertMessage, 
+      id,
+      timestamp: new Date(),
+      type: insertMessage.type || 'user',
+      imageUrl: insertMessage.imageUrl || null
+    };
+    this.messages.set(id, message);
+    return message;
+  }
+
+  async deleteMessage(id: string): Promise<void> {
+    this.messages.delete(id);
   }
 }
 
