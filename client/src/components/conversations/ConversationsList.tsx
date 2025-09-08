@@ -73,97 +73,99 @@ export function ConversationsList({
   return (
     <div className="flex flex-col h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <div className="gradient-emerald-cyan p-4 text-white shadow-lg">
+      <div className="gradient-primary p-6 text-white shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white/25 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm">
+          <div className="flex items-center space-x-4">
+            <div className="w-14 h-14 bg-white/25 rounded-3xl flex items-center justify-center shadow-xl backdrop-blur-sm">
               <img 
                 src={logoUrl} 
                 alt="TalkRoom Logo" 
-                className="w-9 h-9 object-contain"
+                className="w-11 h-11 object-contain"
               />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">TalkRoom</h1>
-              <p className="text-sm text-white/80 font-medium">@{currentUser.username}</p>
+              <p className="text-sm text-white/90 font-medium">@{currentUser.username}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-1">
+          <div className="bg-white/20 rounded-2xl p-2">
             <ThemeToggle />
           </div>
         </div>
         
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
+        <div className="space-y-3 mb-6">
           <Button
             onClick={onCreateRoom}
-            className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 h-10 sm:h-12 rounded-lg sm:rounded-xl shadow-lg text-sm sm:text-base"
+            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-[1.02] h-12 rounded-2xl shadow-lg font-semibold"
             data-testid="button-create-room"
           >
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-            <span className="font-semibold">Créer</span>
+            <Plus className="w-5 h-5 mr-3" />
+            Créer une room
           </Button>
           {onJoinRoom && (
             <Button
               onClick={onJoinRoom}
-              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 h-10 sm:h-12 rounded-lg sm:rounded-xl shadow-lg text-sm sm:text-base"
+              className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-[1.02] h-12 rounded-2xl shadow-lg font-semibold"
               data-testid="button-join-room"
             >
-              <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-              <span className="font-semibold">Rejoindre</span>
+              <ExternalLink className="w-5 h-5 mr-3" />
+              Rejoindre une room
             </Button>
           )}
         </div>
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-200 w-4 h-4" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
           <input
             type="text"
-            placeholder="Rechercher..."
+            placeholder="Rechercher une conversation..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 sm:py-2.5 bg-white/20 border border-white/30 rounded-lg placeholder-emerald-200 text-white focus:outline-none focus:bg-white/30 text-sm sm:text-base"
+            className="w-full pl-12 pr-4 py-3 bg-white/20 border border-white/30 rounded-2xl placeholder-white/70 text-white focus:outline-none focus:bg-white/30 focus:border-white/50 transition-all duration-200"
             data-testid="input-search-conversations"
           />
         </div>
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
         {filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500 p-8">
-            <MessageCircle className="w-16 h-16 mb-4 text-gray-300" />
-            <h3 className="text-lg font-medium mb-2">Aucune conversation</h3>
-            <p className="text-center mb-4">
+            <div className="w-20 h-20 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-3xl flex items-center justify-center mb-6">
+              <MessageCircle className="w-10 h-10 text-gray-400 dark:text-gray-500" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">Aucune conversation</h3>
+            <p className="text-center mb-6 text-gray-600 dark:text-gray-400 max-w-sm">
               {searchTerm 
                 ? "Aucune conversation ne correspond à votre recherche"
-                : "Créez votre première room pour commencer à discuter"
+                : "Créez votre première room pour commencer à discuter avec vos amis"
               }
             </p>
             {!searchTerm && (
               <Button 
                 onClick={onCreateRoom}
-                className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+                className="gradient-primary hover:opacity-90 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Créer une room
+                <Plus className="w-5 h-5 mr-2" />
+                Créer ma première room
               </Button>
             )}
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="p-4 space-y-3">
             {filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
                 onClick={() => onSelectConversation(conversation.id)}
-                className="p-3 sm:p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+                className="modern-card p-4 cursor-pointer transition-all duration-200 hover:scale-[1.02]"
                 data-testid={`conversation-${conversation.id}`}
               >
-                <div className="flex items-start space-x-3">
+                <div className="flex items-start space-x-4">
                   {/* Avatar */}
-                  <Avatar className="w-10 h-10 sm:w-12 sm:h-12">
-                    <AvatarFallback className="bg-gradient-to-r from-emerald-400 to-cyan-400 text-white font-semibold text-sm sm:text-base">
+                  <Avatar className="w-12 h-12">
+                    <AvatarFallback className="gradient-primary text-white font-bold text-lg">
                       {conversation.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
