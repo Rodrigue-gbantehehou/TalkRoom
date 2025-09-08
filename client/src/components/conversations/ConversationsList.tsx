@@ -17,6 +17,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import logoUrl from '@assets/tallk_room copieFF_1757358775756.png';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface Conversation {
   id: string;
@@ -71,7 +72,7 @@ export function ConversationsList({
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-500 to-cyan-500 p-4 text-white">
+      <div className="gradient-emerald-cyan p-4 text-white shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -86,11 +87,12 @@ export function ConversationsList({
               <p className="text-sm text-emerald-100">@{currentUser.username}</p>
             </div>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2">
+            <ThemeToggle />
             <Button
               onClick={onCreateRoom}
               size="sm"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all duration-200"
               data-testid="button-create-room"
             >
               <Plus className="w-4 h-4 mr-1" />
@@ -100,7 +102,7 @@ export function ConversationsList({
               <Button
                 onClick={onJoinRoom}
                 size="sm"
-                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all duration-200"
                 data-testid="button-join-room"
               >
                 Rejoindre

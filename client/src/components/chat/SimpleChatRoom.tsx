@@ -205,10 +205,10 @@ export function SimpleChatRoom({
                 className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                  className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl transition-all duration-200 ${
                     isOwnMessage
-                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
-                      : 'bg-white border shadow-sm'
+                      ? 'gradient-emerald-cyan text-white shadow-md'
+                      : 'bg-white border shadow-sm hover:shadow-md'
                   }`}
                 >
                   {!isOwnMessage && (
@@ -277,7 +277,7 @@ export function SimpleChatRoom({
             <Button
               onClick={sendMessage}
               disabled={!newMessage.trim() || isLoading}
-              className="h-10 w-10 p-0 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+              className="h-10 w-10 p-0 rounded-full gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               data-testid="button-send"
             >
               <Send className="w-4 h-4" />

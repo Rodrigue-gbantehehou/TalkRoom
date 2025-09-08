@@ -207,8 +207,9 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
             </p>
             <Button 
               onClick={() => setShowCreateDialog(true)}
-              className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+              className="gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200 transform hover:scale-105"
             >
+              <Plus className="w-4 h-4 mr-2" />
               Créer une room
             </Button>
           </div>
@@ -291,7 +292,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
                 </Button>
                 <Button
                   onClick={handleCreateRoom}
-                  className="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+                  className="flex-1 gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200"
                   data-testid="button-create-room-confirm"
                 >
                   Créer
@@ -336,7 +337,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
                 </Button>
                 <Button
                   onClick={handleJoinRoomByCode}
-                  className="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+                  className="flex-1 gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={!joinRoomCode.trim()}
                   data-testid="button-join-room-confirm"
                 >
@@ -457,7 +458,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
               </Button>
               <Button
                 onClick={handleCreateRoom}
-                className="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+                className="flex-1 gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200"
                 data-testid="button-create-room-confirm"
               >
                 Créer

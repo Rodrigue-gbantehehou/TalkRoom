@@ -40,8 +40,8 @@ export function UserSetup({ onComplete }: UserSetupProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-500 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-500 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4 transition-all duration-500">
+      <Card className="w-full max-w-md shadow-2xl border-0 glass-card animate-scale-in">
         <CardHeader className="text-center pb-6">
           <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
             <img 
@@ -80,7 +80,7 @@ export function UserSetup({ onComplete }: UserSetupProps) {
 
             <Button 
               type="submit" 
-              className="w-full h-12 text-lg bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 shadow-lg font-semibold"
+              className="w-full h-12 text-lg gradient-emerald-cyan hover-gradient-emerald-cyan shadow-lg font-semibold text-white transition-all duration-200 transform hover:scale-105"
               data-testid="button-continue"
             >
               Commencer à discuter
