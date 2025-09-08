@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Globe, Lock, Copy, ExternalLink } from 'lucide-react';
+import { ChatProvider } from '@/context/ChatContext';
 
 interface Conversation {
   id: string;
@@ -266,12 +267,14 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
       {/* Chat Room */}
       <div className="flex-1">
         {selectedConversation && (
-          <ChatRoom
-            roomCode={selectedConversation.id}
-            username={currentUser.username}
-            role="user"
-            onLeave={() => setSelectedConversationId(null)}
-          />
+          <ChatProvider>
+            <ChatRoom
+              roomCode={selectedConversation.id}
+              username={currentUser.username}
+              role="user"
+              onLeave={() => setSelectedConversationId(null)}
+            />
+          </ChatProvider>
         )}
       </div>
 

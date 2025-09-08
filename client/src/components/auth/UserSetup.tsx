@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, MessageCircle } from 'lucide-react';
+import logoUrl from '@assets/tallk_room copieFF_1757358775756.png';
 
 interface UserSetupProps {
   onComplete: (userData: { username: string; displayName: string }) => void;
@@ -42,8 +43,12 @@ export function UserSetup({ onComplete }: UserSetupProps) {
     <div className="min-h-screen bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-500 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur">
         <CardHeader className="text-center pb-6">
-          <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg">
-            <MessageCircle className="w-10 h-10 text-white" />
+          <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
+            <img 
+              src={logoUrl} 
+              alt="TalkRoom Logo" 
+              className="w-16 h-16 object-contain"
+            />
           </div>
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent">
             TalkRoom
