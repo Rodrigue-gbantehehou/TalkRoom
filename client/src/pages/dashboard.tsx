@@ -40,22 +40,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [joinRoomCode, setJoinRoomCode] = useState('');
-  const [conversations, setConversations] = useState<Conversation[]>([
-    {
-      id: 'DEMO123',
-      name: 'Salle de démonstration',
-      type: 'public' as const,
-      participantCount: 3,
-      onlineCount: 1,
-      lastMessage: {
-        content: 'Bienvenue dans TalkRoom! Les messages disparaissent automatiquement.',
-        timestamp: new Date(),
-        senderName: 'Système',
-        expiresIn: '1h'
-      },
-      unreadCount: 0
-    }
-  ]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [newRoom, setNewRoom] = useState({
     name: '',
     type: 'public' as 'public' | 'private'
@@ -73,12 +58,28 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
     }
 
     try {
-      const response = await fetch(`/api/rooms/${joinRoomCode.trim()}`);
-      if (!response.ok) {
+      // D'abord vérifier si la room existe
+      const checkResponse = await fetch(`/api/rooms/${joinRoomCode.trim()}`);
+      if (!checkResponse.ok) {
         throw new Error('Room introuvable');
       }
       
-      const room = await response.json();
+      const room = await checkResponse.json();
+      
+      // Puis rejoindre la room
+      const joinResponse = await fetch(`/api/rooms/${joinRoomCode.trim()}/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.id
+        })
+      });
+      
+      if (!joinResponse.ok) {
+        throw new Error('Erreur lors de la jointure');
+      }
       
       // Ajouter à la liste des conversations si pas déjà présente
       const exists = conversations.find(c => c.id === room.id);
@@ -86,8 +87,8 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
         const newConversation = {
           id: room.id,
           name: room.name,
-          type: room.type,
-          participantCount: 1,
+          type: room.type || 'public',
+          participantCount: room.participantCount || 1,
           onlineCount: 1,
           lastMessage: null,
           unreadCount: 0
@@ -105,6 +106,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
         description: `Vous avez rejoint "${room.name}"`,
       });
     } catch (error) {
+      console.error('Erreur jointure:', error);
       toast({
         title: "Erreur",
         description: "Impossible de rejoindre cette room. Vérifiez le code.",

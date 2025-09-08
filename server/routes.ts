@@ -86,22 +86,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Join a room - add user as participant
+  app.post('/api/rooms/:id/join', async (req, res) => {
+    try {
+      const room = await storage.getRoom(req.params.id);
+      if (!room) {
+        return res.status(404).json({ error: 'Room not found' });
+      }
+
+      const userId = req.body.userId;
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID required' });
+      }
+
+      // Add user as participant (if not already)
+      await storage.addUserToRoom(req.params.id, userId, 'participant');
+      
+      res.json({ success: true, room });
+    } catch (error) {
+      console.error('Error joining room:', error);
+      res.status(500).json({ error: 'Failed to join room' });
+    }
+  });
+
   // Get user's rooms with details
   app.get('/api/users/:userId/rooms', async (req, res) => {
     try {
-      // For demonstration, return mock data
-      // In a real implementation, this would query rooms where user is a participant
-      const mockRooms = [
-        {
-          id: 'DEMO123',
-          name: 'Salle de démonstration',
-          description: 'Une salle pour tester l\'interface',
-          type: 'public',
-          avatarUrl: null,
-          participantCount: 3,
-          onlineCount: 1,
-          unreadCount: 0,
-          lastMessage: {
+      // For demonstration, return empty array since we removed mock data
+      res.json([]);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to get user rooms' });
+    }
+  });
             content: 'Bienvenue dans TalkRoom!',
             timestamp: new Date(),
             senderName: 'Système'
