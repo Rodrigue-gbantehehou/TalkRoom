@@ -8,6 +8,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserOnlineStatus(userId: string, isOnline: boolean): Promise<void>;
   
   getRoom(id: string): Promise<Room | undefined>;
   createRoom(room: InsertRoom): Promise<Room>;
@@ -48,9 +49,29 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      displayName: insertUser.displayName || null,
+      avatarUrl: insertUser.avatarUrl || null,
+      isOnline: false,
+      lastSeen: new Date(),
+      bio: insertUser.bio || null,
+      createdAt: new Date()
+    };
     this.users.set(id, user);
     return user;
+  }
+
+  async updateUserOnlineStatus(userId: string, isOnline: boolean): Promise<void> {
+    const user = this.users.get(userId);
+    if (user) {
+      this.users.set(userId, {
+        ...user,
+        isOnline,
+        lastSeen: new Date()
+      });
+    }
   }
 
   async getRoom(id: string): Promise<Room | undefined> {
@@ -151,6 +172,15 @@ export class DbStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const result = await db.insert(users).values(insertUser).returning();
     return result[0];
+  }
+
+  async updateUserOnlineStatus(userId: string, isOnline: boolean): Promise<void> {
+    await db.update(users)
+      .set({ 
+        isOnline,
+        lastSeen: new Date()
+      })
+      .where(eq(users.id, userId));
   }
 
   async getRoom(id: string): Promise<Room | undefined> {

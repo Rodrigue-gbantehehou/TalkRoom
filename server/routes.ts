@@ -111,6 +111,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               return;
             }
 
+            // Update user online status
+            await storage.updateUserOnlineStatus(user.id, true);
+
             // Add user to room
             await storage.addRoomParticipant({
               roomId,
@@ -135,13 +138,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
               username 
             }));
 
-            // Broadcast user joined to room
+            // Broadcast user joined to room with online status
             broadcastToRoom(roomId, {
               type: 'user_joined',
               username,
               userId: user.id,
-              role: role || 'user'
+              role: role || 'user',
+              isOnline: true
             }, clientId);
+
+            // Send current online users
+            const onlineUsers = Array.from(connectedClients.values())
+              .filter(client => client.roomId === roomId)
+              .map(client => ({
+                userId: client.userId,
+                username: client.username,
+                isOnline: true
+              }));
+
+            ws.send(JSON.stringify({
+              type: 'online_users',
+              users: onlineUsers
+            }));
 
             // Send current participants list
             const participants = await getRoomParticipants(roomId);
@@ -254,13 +272,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (clientId) {
         const client = connectedClients.get(clientId);
         if (client) {
+          // Mark user as offline
+          await storage.updateUserOnlineStatus(client.userId, false);
+          
           await storage.removeRoomParticipant(client.roomId, client.userId);
           
-          // Broadcast user disconnected
+          // Broadcast user disconnected with offline status
           broadcastToRoom(client.roomId, {
             type: 'user_left',
             username: client.username,
-            userId: client.userId
+            userId: client.userId,
+            isOnline: false
           }, clientId);
 
           connectedClients.delete(clientId);

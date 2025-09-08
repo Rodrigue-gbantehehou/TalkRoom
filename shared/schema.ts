@@ -126,7 +126,9 @@ export interface RoomData {
 export type SocketMessage = 
   | { type: 'user'; id: string; content: string; senderId: string; senderName: string; timestamp: number; imageUrl?: string }
   | { type: 'typing'; userId: string; username: string; isTyping: boolean }
-  | { type: 'user_joined'; userId: string; username: string; timestamp: number }
-  | { type: 'user_left'; userId: string; username: string; timestamp: number }
+  | { type: 'user_joined'; userId: string; username: string; timestamp: number; isOnline?: boolean }
+  | { type: 'user_left'; userId: string; username: string; timestamp: number; isOnline?: boolean }
+  | { type: 'online_users'; users: { userId: string; username: string; isOnline: boolean }[] }
+  | { type: 'user_status_change'; userId: string; username: string; isOnline: boolean }
   | { type: 'reaction'; messageId: string; emoji: string; userId: string; username: string }
   | { type: 'delete_message'; messageId: string; timestamp: number };
