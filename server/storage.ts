@@ -83,7 +83,8 @@ export class MemStorage implements IStorage {
       ...insertRoom, 
       name: insertRoom.name || null,
       createdAt: new Date(),
-      isActive: true 
+      isActive: true,
+      lastActivity: new Date()
     };
     this.rooms.set(room.id, room);
     return room;

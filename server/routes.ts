@@ -24,7 +24,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const roomId = randomUUID().slice(0, 8).toUpperCase();
       const room = await storage.createRoom({ 
         id: roomId, 
-        name: req.body.name || `Salle ${roomId}` 
+        name: req.body.name || `Salle ${roomId}`,
+        createdBy: req.body.createdBy || 'system'
       });
       res.json(room);
     } catch (error) {
