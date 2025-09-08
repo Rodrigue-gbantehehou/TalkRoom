@@ -12,7 +12,8 @@ import {
   Globe,
   MessageCircle,
   Share,
-  Copy 
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -73,42 +74,45 @@ export function ConversationsList({
     <div className="flex flex-col h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
       <div className="gradient-emerald-cyan p-4 text-white shadow-lg">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-white/25 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm">
               <img 
                 src={logoUrl} 
                 alt="TalkRoom Logo" 
-                className="w-8 h-8 object-contain"
+                className="w-9 h-9 object-contain"
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold">TalkRoom</h1>
-              <p className="text-sm text-emerald-100">@{currentUser.username}</p>
+              <h1 className="text-2xl font-bold text-white">TalkRoom</h1>
+              <p className="text-sm text-white/80 font-medium">@{currentUser.username}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <ThemeToggle />
-            <Button
-              onClick={onCreateRoom}
-              size="sm"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all duration-200"
-              data-testid="button-create-room"
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              Créer
-            </Button>
-            {onJoinRoom && (
-              <Button
-                onClick={onJoinRoom}
-                size="sm"
-                className="bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all duration-200"
-                data-testid="button-join-room"
-              >
-                Rejoindre
-              </Button>
-            )}
           </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <Button
+            onClick={onCreateRoom}
+            className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 h-12 rounded-xl shadow-lg"
+            data-testid="button-create-room"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            <span className="font-semibold">Créer</span>
+          </Button>
+          {onJoinRoom && (
+            <Button
+              onClick={onJoinRoom}
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 h-12 rounded-xl shadow-lg"
+              data-testid="button-join-room"
+            >
+              <ExternalLink className="w-5 h-5 mr-2" />
+              <span className="font-semibold">Rejoindre</span>
+            </Button>
+          )}
         </div>
 
         {/* Search */}

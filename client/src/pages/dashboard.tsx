@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Globe, Lock, Copy, ExternalLink } from 'lucide-react';
+import { Plus, Globe, Lock, Copy, ExternalLink, Shield, Clock } from 'lucide-react';
 import { ChatProvider } from '@/context/ChatContext';
+import logoUrl from '@assets/tallk_room copieFF_1757358775756.png';
 
 interface Conversation {
   id: string;
@@ -196,22 +197,62 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
           />
         </div>
 
-        <div className="flex-1 bg-gray-100 dark:bg-gray-800 flex items-center justify-center transition-colors duration-300">
-          <div className="text-center text-gray-500 dark:text-gray-400 animate-scale-in">
-            <div className="w-24 h-24 bg-gradient-to-br from-emerald-200 to-cyan-200 dark:from-emerald-800 dark:to-cyan-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <Plus className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+        <div className="flex-1 bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center transition-all duration-500">
+          <div className="text-center max-w-md mx-auto p-8 animate-scale-in">
+            {/* Logo Section */}
+            <div className="mb-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl transform hover:scale-110 transition-all duration-300">
+                <img 
+                  src={logoUrl} 
+                  alt="TalkRoom Logo" 
+                  className="w-16 h-16 object-contain"
+                />
+              </div>
+              <h3 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Bienvenue sur TalkRoom</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-lg">
+                Messages éphémères • Conversations privées
+              </p>
             </div>
-            <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Bienvenue sur TalkRoom</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4 max-w-sm mx-auto">
-              Sélectionnez une conversation ou créez une nouvelle room pour commencer à discuter
-            </p>
-            <Button 
-              onClick={() => setShowCreateDialog(true)}
-              className="gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200 transform hover:scale-105 shadow-lg"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Créer une room
-            </Button>
+
+            {/* Action Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div 
+                onClick={() => setShowCreateDialog(true)}
+                className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-300 transform hover:-translate-y-1"
+              >
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <Plus className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Créer une room</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Démarrez une nouvelle conversation privée</p>
+              </div>
+
+              <div 
+                onClick={() => setShowJoinDialog(true)}
+                className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-300 transform hover:-translate-y-1"
+              >
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <ExternalLink className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Rejoindre une room</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Entrez avec un code d'invitation</p>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="text-center text-sm text-gray-500 dark:text-gray-400 space-y-1">
+              <p className="flex items-center justify-center space-x-4">
+                <span className="flex items-center">
+                  <Shield className="w-4 h-4 mr-1 text-green-500" />
+                  Chiffrement E2E
+                </span>
+                <span className="flex items-center">
+                  <Clock className="w-4 h-4 mr-1 text-blue-500" />
+                  Messages éphémères
+                </span>
+              </p>
+              <p className="text-xs">Aucune inscription requise • Totalement anonyme</p>
+            </div>
           </div>
         </div>
 
