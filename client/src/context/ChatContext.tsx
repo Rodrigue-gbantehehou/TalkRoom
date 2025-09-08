@@ -11,6 +11,7 @@ interface ChatContextType extends ChatState {
   addTypingUser: (username: string) => void;
   removeTypingUser: (username: string) => void;
   clearMessages: () => void;
+  loadMessages: (messages: Message[]) => void;
   incrementMessageCount: () => void;
   addReaction: (messageId: string, emoji: string, userId: string, username: string) => void;
   closeRoom: () => void;
@@ -27,6 +28,7 @@ type ChatAction =
   | { type: 'ADD_TYPING_USER'; payload: string }
   | { type: 'REMOVE_TYPING_USER'; payload: string }
   | { type: 'CLEAR_MESSAGES' }
+  | { type: 'LOAD_MESSAGES'; payload: Message[] }
   | { type: 'INCREMENT_MESSAGE_COUNT' }
   | { type: 'ADD_REACTION'; payload: { messageId: string; reaction: MessageReaction } }
   | { type: 'CLOSE_ROOM' };
@@ -69,6 +71,9 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     
     case 'CLEAR_MESSAGES':
       return { ...state, messages: [], messageCount: 0 };
+    
+    case 'LOAD_MESSAGES':
+      return { ...state, messages: action.payload, messageCount: action.payload.length };
     
     case 'INCREMENT_MESSAGE_COUNT':
       return { ...state, messageCount: state.messageCount + 1 };
@@ -141,6 +146,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'CLEAR_MESSAGES' });
   }, []);
 
+  const loadMessages = useCallback((messages: Message[]) => {
+    dispatch({ type: 'LOAD_MESSAGES', payload: messages });
+  }, []);
+
   const incrementMessageCount = useCallback(() => {
     dispatch({ type: 'INCREMENT_MESSAGE_COUNT' });
   }, []);
@@ -165,6 +174,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       addTypingUser,
       removeTypingUser,
       clearMessages,
+      loadMessages,
       incrementMessageCount,
       addReaction,
       closeRoom

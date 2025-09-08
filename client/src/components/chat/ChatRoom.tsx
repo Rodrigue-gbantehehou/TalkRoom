@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { SessionStorageService } from '@/lib/sessionStorage';
 import { FaBolt, FaTimes, FaShare, FaFileExport, FaTrash, FaShieldAlt, FaUsers, FaChartBar, FaLink, FaClipboard, FaShareAlt, FaDoorOpen, FaSun, FaMoon, FaComments, FaBan } from "react-icons/fa";
+import { apiRequest } from '@/lib/queryClient';
 
 
 interface ChatRoomProps {
@@ -38,6 +39,7 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
     addTypingUser,
     removeTypingUser,
     clearMessages,
+    loadMessages,
     incrementMessageCount,
     addReaction,
     closeRoom
@@ -48,6 +50,31 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('connecting');
   const [showMenu, setShowMenu] = useState(false);
   const { encryptMessage, decryptMessage, generateRoomKey, importRoomKey } = useEncryption();
+
+  // Function to load existing messages from the database
+  const loadExistingMessages = async () => {
+    try {
+      const response = await apiRequest('GET', `/api/rooms/${roomCode}/messages`);
+      const storedMessages = await response.json();
+      
+      // Convert stored messages to frontend format
+      const formattedMessages: Message[] = storedMessages.map((msg: any) => ({
+        id: msg.id,
+        content: msg.content,
+        senderId: msg.senderId,
+        senderName: msg.senderName,
+        timestamp: new Date(msg.timestamp).getTime(),
+        type: msg.type,
+        imageUrl: msg.imageUrl
+      }));
+
+      // Load messages into the chat context
+      loadMessages(formattedMessages);
+    } catch (error) {
+      console.error('Failed to load existing messages:', error);
+      // Don't show an error toast as this is not critical functionality
+    }
+  };
 
   const handleWebSocketMessage = async (data: any) => {
     switch (data.type) {
@@ -62,6 +89,9 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
         
         // Generate or import encryption key
         await generateRoomKey(roomCode);
+        
+        // Load existing messages from database
+        await loadExistingMessages();
         
         // Add welcome message
         addMessage({
@@ -291,14 +321,6 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
   };
 
   const handleDeleteMessage = (messageId: string) => {
-    // Remove from local state
-    setMessages(prevMessages => 
-      prevMessages.filter(msg => msg.id !== messageId)
-    );
-    
-    // Remove from session storage
-    SessionStorageService.removeMessage(messageId);
-    
     // Broadcast deletion to other users
     sendWebSocketMessage({
       type: 'delete_message',
