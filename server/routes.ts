@@ -28,7 +28,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       res.json(room);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to create room' });
+      console.error('Error creating room:', error);
+      res.status(500).json({ error: 'Failed to create room', details: (error as Error).message });
     }
   });
 
@@ -42,7 +43,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const participants = await storage.getRoomParticipants(req.params.id);
       res.json({ ...room, participantCount: participants.length });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to get room' });
+      console.error('Error getting room:', error);
+      res.status(500).json({ error: 'Failed to get room', details: (error as Error).message });
     }
   });
 

@@ -1,5 +1,8 @@
 import { type User, type InsertUser, type Room, type InsertRoom, type RoomParticipant, type InsertRoomParticipant, type StoredMessage, type InsertMessage } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { db } from "./db";
+import { users, rooms, roomParticipants, messages } from "@shared/schema";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -133,9 +136,6 @@ export class MemStorage implements IStorage {
 }
 
 // Database storage implementation using Drizzle
-import { db } from "./db";
-import { users, rooms, roomParticipants, messages } from "@shared/schema";
-import { eq, and } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
@@ -205,4 +205,5 @@ export class DbStorage implements IStorage {
   }
 }
 
-export const storage = new DbStorage();
+// Temporarily use MemStorage until Supabase connectivity is resolved
+export const storage = new MemStorage();
