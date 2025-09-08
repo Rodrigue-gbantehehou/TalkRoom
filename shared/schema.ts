@@ -24,6 +24,17 @@ export const roomParticipants = pgTable("room_participants", {
   joinedAt: timestamp("joined_at").defaultNow(),
 });
 
+export const messages = pgTable("messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  content: text("content").notNull(),
+  senderId: varchar("sender_id").notNull(),
+  senderName: text("sender_name").notNull(),
+  roomId: varchar("room_id").notNull(),
+  timestamp: timestamp("timestamp").defaultNow(),
+  type: text("type").notNull().default("user"), // "user" | "system" | "image"
+  imageUrl: text("image_url"),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -40,12 +51,23 @@ export const insertRoomParticipantSchema = createInsertSchema(roomParticipants).
   role: true,
 });
 
+export const insertMessageSchema = createInsertSchema(messages).pick({
+  content: true,
+  senderId: true,
+  senderName: true,
+  roomId: true,
+  type: true,
+  imageUrl: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertRoom = z.infer<typeof insertRoomSchema>;
 export type Room = typeof rooms.$inferSelect;
 export type InsertRoomParticipant = z.infer<typeof insertRoomParticipantSchema>;
 export type RoomParticipant = typeof roomParticipants.$inferSelect;
+export type InsertMessage = z.infer<typeof insertMessageSchema>;
+export type StoredMessage = typeof messages.$inferSelect;
 
 // Frontend-only types for P2P messaging
 export interface Message {
