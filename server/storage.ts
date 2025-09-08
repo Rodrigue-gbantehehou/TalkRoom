@@ -144,15 +144,35 @@ export class MemStorage implements IStorage {
 
   async createMessage(insertMessage: InsertMessage): Promise<StoredMessage> {
     const id = randomUUID();
+    const expiresAt = insertMessage.expiryDuration && insertMessage.expiryDuration !== 'never' 
+      ? this.calculateExpirationDate(insertMessage.expiryDuration)
+      : null;
+      
     const message: StoredMessage = { 
       ...insertMessage, 
       id,
       timestamp: new Date(),
       type: insertMessage.type || 'user',
-      imageUrl: insertMessage.imageUrl || null
+      imageUrl: insertMessage.imageUrl || null,
+      expiresAt,
+      expiryDuration: insertMessage.expiryDuration || '1h',
+      deleteAfterRead: insertMessage.deleteAfterRead || false,
+      isRead: false
     };
     this.messages.set(id, message);
     return message;
+  }
+
+  private calculateExpirationDate(duration: string): Date {
+    const now = new Date();
+    switch (duration) {
+      case '15s': return new Date(now.getTime() + 15 * 1000);
+      case '1min': return new Date(now.getTime() + 60 * 1000);
+      case '5min': return new Date(now.getTime() + 5 * 60 * 1000);
+      case '1h': return new Date(now.getTime() + 60 * 60 * 1000);
+      case '24h': return new Date(now.getTime() + 24 * 60 * 60 * 1000);
+      default: return new Date(now.getTime() + 60 * 60 * 1000);
+    }
   }
 
   async deleteMessage(id: string): Promise<void> {
