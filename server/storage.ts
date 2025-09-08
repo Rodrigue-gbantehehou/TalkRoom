@@ -132,4 +132,77 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database storage implementation using Drizzle
+import { db } from "./db";
+import { users, rooms, roomParticipants, messages } from "@shared/schema";
+import { eq, and } from "drizzle-orm";
+
+export class DbStorage implements IStorage {
+  async getUser(id: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
+    return result[0];
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const result = await db.insert(users).values(insertUser).returning();
+    return result[0];
+  }
+
+  async getRoom(id: string): Promise<Room | undefined> {
+    const result = await db.select().from(rooms).where(eq(rooms.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createRoom(insertRoom: InsertRoom): Promise<Room> {
+    const result = await db.insert(rooms).values(insertRoom).returning();
+    return result[0];
+  }
+
+  async deleteRoom(id: string): Promise<void> {
+    await db.delete(rooms).where(eq(rooms.id, id));
+    await db.delete(roomParticipants).where(eq(roomParticipants.roomId, id));
+  }
+
+  async getRoomParticipants(roomId: string): Promise<RoomParticipant[]> {
+    return await db.select().from(roomParticipants).where(eq(roomParticipants.roomId, roomId));
+  }
+
+  async addRoomParticipant(insertParticipant: InsertRoomParticipant): Promise<RoomParticipant> {
+    const result = await db.insert(roomParticipants).values(insertParticipant).returning();
+    return result[0];
+  }
+
+  async removeRoomParticipant(roomId: string, userId: string): Promise<void> {
+    await db.delete(roomParticipants)
+      .where(and(eq(roomParticipants.roomId, roomId), eq(roomParticipants.userId, userId)));
+  }
+
+  async getRoomParticipant(roomId: string, userId: string): Promise<RoomParticipant | undefined> {
+    const result = await db.select().from(roomParticipants)
+      .where(and(eq(roomParticipants.roomId, roomId), eq(roomParticipants.userId, userId)))
+      .limit(1);
+    return result[0];
+  }
+
+  async getRoomMessages(roomId: string): Promise<StoredMessage[]> {
+    return await db.select().from(messages)
+      .where(eq(messages.roomId, roomId))
+      .orderBy(messages.timestamp);
+  }
+
+  async createMessage(insertMessage: InsertMessage): Promise<StoredMessage> {
+    const result = await db.insert(messages).values(insertMessage).returning();
+    return result[0];
+  }
+
+  async deleteMessage(id: string): Promise<void> {
+    await db.delete(messages).where(eq(messages.id, id));
+  }
+}
+
+export const storage = new DbStorage();
