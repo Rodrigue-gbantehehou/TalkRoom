@@ -197,75 +197,75 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
           />
         </div>
 
-        <div className="flex-1 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-indigo-950 flex items-center justify-center transition-all duration-500 p-6">
-          <div className="text-center max-w-lg mx-auto w-full animate-scale-in">
+        <div className="flex-1 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-indigo-950 flex items-center justify-center transition-all duration-500 p-4 sm:p-6">
+          <div className="text-center max-w-md sm:max-w-lg mx-auto w-full animate-scale-in">
             {/* Welcome Section */}
-            <div className="mb-8">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl transform hover:scale-105 transition-all duration-300">
+            <div className="mb-6 sm:mb-8">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 gradient-primary rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-2xl transform hover:scale-105 transition-all duration-300">
                 <img 
                   src={logoUrl} 
                   alt="TalkRoom Logo" 
-                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+                  className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain"
                 />
               </div>
-              <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-gray-900 dark:text-white">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white">
                 Bienvenue, {currentUser.displayName}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-lg font-medium mb-6">
+              <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg font-medium mb-4 sm:mb-6 px-2">
                 Commencez une nouvelle conversation ou rejoignez-en une existante
               </p>
             </div>
 
             {/* Action Cards */}
-            <div className="grid gap-4 mb-8">
+            <div className="grid gap-3 sm:gap-4 mb-6 sm:mb-8">
               <div 
                 onClick={() => setShowCreateDialog(true)}
-                className="group modern-card p-6 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0"
+                className="group modern-card p-4 sm:p-6 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0"
               >
-                <div className="flex items-center justify-center space-x-4">
-                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Plus className="w-6 h-6 text-white" />
+                <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div className="text-left flex-1">
-                    <h3 className="font-bold text-lg mb-1">Créer une room</h3>
-                    <p className="text-white/80 text-sm">Démarrez une nouvelle conversation sécurisée</p>
+                    <h3 className="font-bold text-base sm:text-lg mb-1">Créer une room</h3>
+                    <p className="text-white/80 text-xs sm:text-sm">Démarrez une nouvelle conversation sécurisée</p>
                   </div>
                 </div>
               </div>
 
               <div 
                 onClick={() => setShowJoinDialog(true)}
-                className="group modern-card p-6 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] bg-white dark:bg-gray-800"
+                className="group modern-card p-4 sm:p-6 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] bg-white dark:bg-gray-800"
               >
-                <div className="flex items-center justify-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <ExternalLink className="w-6 h-6 text-white" />
+                <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div className="text-left flex-1">
-                    <h3 className="font-bold text-lg mb-1 text-gray-900 dark:text-white">Rejoindre une room</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">Accédez avec un code d'invitation</p>
+                    <h3 className="font-bold text-base sm:text-lg mb-1 text-gray-900 dark:text-white">Rejoindre une room</h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">Accédez avec un code d'invitation</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Features Grid */}
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="modern-card p-4">
-                <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
+              <div className="modern-card p-3 sm:p-4">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 dark:bg-green-900 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1 sm:mb-2">
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 dark:text-green-400" />
                 </div>
-                <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Chiffré E2E</p>
+                <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Chiffré</p>
               </div>
-              <div className="modern-card p-4">
-                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="modern-card p-3 sm:p-4">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 dark:bg-blue-900 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1 sm:mb-2">
+                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Éphémère</p>
               </div>
-              <div className="modern-card p-4">
-                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <div className="modern-card p-3 sm:p-4">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 dark:bg-purple-900 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1 sm:mb-2">
+                  <Users className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400" />
                 </div>
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Anonyme</p>
               </div>
