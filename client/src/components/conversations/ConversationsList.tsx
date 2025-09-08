@@ -70,7 +70,7 @@ export function ConversationsList({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
       <div className="gradient-emerald-cyan p-4 text-white shadow-lg">
         <div className="flex items-center justify-between mb-4">

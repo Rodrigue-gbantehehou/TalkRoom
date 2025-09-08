@@ -141,9 +141,9 @@ export function SimpleChatRoom({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white border-b px-4 py-3 flex items-center justify-between">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between shadow-sm transition-colors duration-300">
         <div className="flex items-center space-x-3">
           <Button 
             variant="ghost" 
@@ -161,8 +161,8 @@ export function SimpleChatRoom({
           </Avatar>
           
           <div>
-            <h2 className="font-semibold text-gray-900">{roomName}</h2>
-            <p className="text-sm text-gray-500">Room {roomCode}</p>
+            <h2 className="font-semibold text-gray-900 dark:text-white">{roomName}</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Room {roomCode}</p>
           </div>
         </div>
 
@@ -247,9 +247,9 @@ export function SimpleChatRoom({
       </div>
 
       {/* Input */}
-      <div className="border-t bg-white">
+      <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors duration-300">
         {/* Expiry Settings */}
-        <div className="px-4 py-2 bg-gray-50 border-b">
+        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 transition-colors duration-300">
           <MessageExpirySelector
             selectedDuration={expiryDuration}
             onDurationChange={setExpiryDuration}
@@ -261,14 +261,14 @@ export function SimpleChatRoom({
         {/* Message Input */}
         <div className="p-4">
           <div className="flex items-center space-x-2">
-            <div className="flex-1 bg-gray-100 rounded-full px-4 py-2">
+            <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 transition-colors duration-300">
               <Input
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Tapez votre message..."
-                className="bg-transparent border-none focus:ring-0 focus:outline-none p-0"
+                className="bg-transparent border-none focus:ring-0 focus:outline-none p-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 disabled={isLoading}
                 data-testid="input-message"
               />
