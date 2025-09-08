@@ -82,6 +82,9 @@ export class MemStorage implements IStorage {
     const room: Room = { 
       ...insertRoom, 
       name: insertRoom.name || null,
+      avatarUrl: insertRoom.avatarUrl || null,
+      description: insertRoom.description || null,
+      type: insertRoom.type || 'public',
       createdAt: new Date(),
       isActive: true,
       lastActivity: new Date()
