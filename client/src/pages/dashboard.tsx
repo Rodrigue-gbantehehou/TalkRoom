@@ -197,74 +197,82 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
           />
         </div>
 
-        <div className="flex-1 bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center transition-all duration-500">
-          <div className="text-center max-w-md mx-auto p-8 animate-scale-in">
+        <div className="flex-1 bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center transition-all duration-500 p-4">
+          <div className="text-center max-w-sm mx-auto w-full animate-scale-in">
             {/* Logo Section */}
-            <div className="mb-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl transform hover:scale-110 transition-all duration-300">
+            <div className="mb-6">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-3 shadow-xl transform hover:scale-110 transition-all duration-300">
                 <img 
                   src={logoUrl} 
                   alt="TalkRoom Logo" 
-                  className="w-16 h-16 object-contain"
+                  className="w-12 h-12 sm:w-16 sm:h-16 object-contain"
                 />
               </div>
-              <h3 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Bienvenue sur TalkRoom</h3>
-              <p className="text-gray-600 dark:text-gray-300 text-lg">
+              <h3 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Bienvenue sur TalkRoom</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-lg">
                 Messages éphémères • Conversations privées
               </p>
             </div>
 
             {/* Action Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <div className="space-y-3 mb-6">
               <div 
                 onClick={() => setShowCreateDialog(true)}
-                className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-300 transform hover:-translate-y-1"
+                className="group p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 w-full"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <Plus className="w-6 h-6 text-white" />
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Créer une room</h4>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Démarrez une nouvelle conversation</p>
+                  </div>
                 </div>
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Créer une room</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Démarrez une nouvelle conversation privée</p>
               </div>
 
               <div 
                 onClick={() => setShowJoinDialog(true)}
-                className="group p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-300 transform hover:-translate-y-1"
+                className="group p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 w-full"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <ExternalLink className="w-6 h-6 text-white" />
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Rejoindre une room</h4>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Entrez avec un code d'invitation</p>
+                  </div>
                 </div>
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Rejoindre une room</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Entrez avec un code d'invitation</p>
               </div>
             </div>
 
             {/* Features */}
-            <div className="text-center text-sm text-gray-500 dark:text-gray-400 space-y-1">
-              <p className="flex items-center justify-center space-x-4">
+            <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 space-y-2">
+              <div className="flex items-center justify-center space-x-3 sm:space-x-4">
                 <span className="flex items-center">
-                  <Shield className="w-4 h-4 mr-1 text-green-500" />
-                  Chiffrement E2E
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-green-500" />
+                  <span className="text-xs sm:text-sm">E2E</span>
                 </span>
                 <span className="flex items-center">
-                  <Clock className="w-4 h-4 mr-1 text-blue-500" />
-                  Messages éphémères
+                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-blue-500" />
+                  <span className="text-xs sm:text-sm">Éphémère</span>
                 </span>
-              </p>
-              <p className="text-xs">Aucune inscription requise • Totalement anonyme</p>
+              </div>
+              <p className="text-xs">Aucune inscription • Totalement anonyme</p>
             </div>
           </div>
         </div>
 
         {/* Create Room Dialog */}
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogContent className="max-w-md glass-card border-0">
-            <DialogHeader className="text-center pb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Plus className="w-8 h-8 text-white" />
+          <DialogContent className="max-w-sm mx-4 sm:max-w-md glass-card border-0">
+            <DialogHeader className="text-center pb-4 sm:pb-6">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+                <Plus className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
-              <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">Créer une nouvelle room</DialogTitle>
-              <p className="text-gray-600 dark:text-gray-400">Configurez votre espace de discussion privé</p>
+              <DialogTitle className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Créer une room</DialogTitle>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Configurez votre espace de discussion</p>
             </DialogHeader>
             
             <div className="space-y-6 py-2">
@@ -354,15 +362,15 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
 
         {/* Join Room Dialog */}
         <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
-          <DialogContent className="sm:max-w-md glass-card border-0">
-            <DialogHeader className="text-center pb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <ExternalLink className="w-8 h-8 text-white" />
+          <DialogContent className="max-w-sm mx-4 sm:max-w-md glass-card border-0">
+            <DialogHeader className="text-center pb-4 sm:pb-6">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+                <ExternalLink className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
-              <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+              <DialogTitle className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 Rejoindre une room
               </DialogTitle>
-              <p className="text-gray-600 dark:text-gray-400">Entrez le code d'invitation pour accéder à la conversation</p>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Entrez le code pour accéder à la conversation</p>
             </DialogHeader>
             <div className="space-y-6 py-2">
               <div>
@@ -414,7 +422,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
   return (
     <div className="h-screen flex bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Sidebar with conversations (hidden on mobile when in chat) */}
-      <div className={`w-80 border-r border-gray-200 dark:border-gray-700 ${selectedConversationId ? 'hidden md:block' : 'block'} transition-all duration-300`}>
+      <div className={`w-full md:w-80 border-r border-gray-200 dark:border-gray-700 ${selectedConversationId ? 'hidden md:block' : 'block'} transition-all duration-300`}>
         <ConversationsList
           conversations={conversations}
           onSelectConversation={handleJoinRoom}

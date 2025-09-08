@@ -94,22 +94,22 @@ export function ConversationsList({
         </div>
         
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
           <Button
             onClick={onCreateRoom}
-            className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 h-12 rounded-xl shadow-lg"
+            className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 h-10 sm:h-12 rounded-lg sm:rounded-xl shadow-lg text-sm sm:text-base"
             data-testid="button-create-room"
           >
-            <Plus className="w-5 h-5 mr-2" />
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
             <span className="font-semibold">Créer</span>
           </Button>
           {onJoinRoom && (
             <Button
               onClick={onJoinRoom}
-              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 h-12 rounded-xl shadow-lg"
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 h-10 sm:h-12 rounded-lg sm:rounded-xl shadow-lg text-sm sm:text-base"
               data-testid="button-join-room"
             >
-              <ExternalLink className="w-5 h-5 mr-2" />
+              <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
               <span className="font-semibold">Rejoindre</span>
             </Button>
           )}
@@ -120,10 +120,10 @@ export function ConversationsList({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-200 w-4 h-4" />
           <input
             type="text"
-            placeholder="Rechercher une conversation..."
+            placeholder="Rechercher..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/20 border border-white/30 rounded-lg placeholder-emerald-200 text-white focus:outline-none focus:bg-white/30"
+            className="w-full pl-10 pr-4 py-2 sm:py-2.5 bg-white/20 border border-white/30 rounded-lg placeholder-emerald-200 text-white focus:outline-none focus:bg-white/30 text-sm sm:text-base"
             data-testid="input-search-conversations"
           />
         </div>
@@ -157,13 +157,13 @@ export function ConversationsList({
               <div
                 key={conversation.id}
                 onClick={() => onSelectConversation(conversation.id)}
-                className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                className="p-3 sm:p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
                 data-testid={`conversation-${conversation.id}`}
               >
                 <div className="flex items-start space-x-3">
                   {/* Avatar */}
-                  <Avatar className="w-12 h-12">
-                    <AvatarFallback className="bg-gradient-to-r from-emerald-400 to-cyan-400 text-white font-semibold">
+                  <Avatar className="w-10 h-10 sm:w-12 sm:h-12">
+                    <AvatarFallback className="bg-gradient-to-r from-emerald-400 to-cyan-400 text-white font-semibold text-sm sm:text-base">
                       {conversation.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
