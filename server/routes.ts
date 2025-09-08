@@ -85,6 +85,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user's rooms with details
+  app.get('/api/users/:userId/rooms', async (req, res) => {
+    try {
+      // For demonstration, return mock data
+      // In a real implementation, this would query rooms where user is a participant
+      const mockRooms = [
+        {
+          id: 'DEMO123',
+          name: 'Salle de démonstration',
+          description: 'Une salle pour tester l\'interface',
+          type: 'public',
+          avatarUrl: null,
+          participantCount: 3,
+          onlineCount: 1,
+          unreadCount: 0,
+          lastMessage: {
+            content: 'Bienvenue dans TalkRoom!',
+            timestamp: new Date(),
+            senderName: 'Système'
+          }
+        }
+      ];
+      
+      res.json(mockRooms);
+    } catch (error) {
+      console.error('Error fetching user rooms:', error);
+      res.status(500).json({ error: 'Failed to fetch user rooms' });
+    }
+  });
+
+  // Get public rooms
+  app.get('/api/rooms/public', async (req, res) => {
+    try {
+      res.json([]);
+    } catch (error) {
+      console.error('Error fetching public rooms:', error);
+      res.status(500).json({ error: 'Failed to fetch public rooms' });
+    }
+  });
+
   // WebSocket handling
   wss.on('connection', (ws: WebSocket) => {
     let clientId: string | null = null;
