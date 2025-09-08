@@ -7,13 +7,24 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  displayName: text("display_name"),
+  avatarUrl: text("avatar_url"),
+  isOnline: boolean("is_online").default(false),
+  lastSeen: timestamp("last_seen").defaultNow(),
+  bio: text("bio"),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const rooms = pgTable("rooms", {
   id: varchar("id").primaryKey(),
   name: text("name"),
+  description: text("description"),
+  avatarUrl: text("avatar_url"),
+  type: text("type").notNull().default("public"), // "public" | "private"
+  createdBy: varchar("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   isActive: boolean("is_active").default(true),
+  lastActivity: timestamp("last_activity").defaultNow(),
 });
 
 export const roomParticipants = pgTable("room_participants", {
@@ -38,11 +49,18 @@ export const messages = pgTable("messages", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  displayName: true,
+  avatarUrl: true,
+  bio: true,
 });
 
 export const insertRoomSchema = createInsertSchema(rooms).pick({
   id: true,
   name: true,
+  description: true,
+  avatarUrl: true,
+  type: true,
+  createdBy: true,
 });
 
 export const insertRoomParticipantSchema = createInsertSchema(roomParticipants).pick({
@@ -90,8 +108,12 @@ export interface MessageReaction {
 export interface ChatUser {
   id: string;
   username: string;
+  displayName?: string;
+  avatarUrl?: string;
   role: 'user' | 'admin';
   isOnline: boolean;
+  lastSeen?: Date;
+  bio?: string;
 }
 
 export interface RoomData {
