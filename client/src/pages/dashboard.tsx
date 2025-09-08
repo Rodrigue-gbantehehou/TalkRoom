@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ConversationsList } from '@/components/conversations/ConversationsList';
 import { SimpleChatRoom } from '@/components/chat/SimpleChatRoom';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -281,7 +281,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
                 <Plus className="w-8 h-8 text-white" />
               </div>
               <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">Créer une room</DialogTitle>
-              <p className="text-gray-600 dark:text-gray-400">Configurez votre espace de discussion privé</p>
+              <DialogDescription className="text-gray-600 dark:text-gray-400">Configurez votre espace de discussion privé</DialogDescription>
             </DialogHeader>
             
             <div className="space-y-6 py-4">
@@ -379,7 +379,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
               <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
                 Rejoindre une room
               </DialogTitle>
-              <p className="text-gray-600 dark:text-gray-400">Entrez le code d'invitation pour accéder à la conversation</p>
+              <DialogDescription className="text-gray-600 dark:text-gray-400">Entrez le code d'invitation pour accéder à la conversation</DialogDescription>
             </DialogHeader>
             <div className="space-y-6 py-4">
               <div>
