@@ -44,6 +44,10 @@ export const messages = pgTable("messages", {
   timestamp: timestamp("timestamp").defaultNow(),
   type: text("type").notNull().default("user"), // "user" | "system" | "image"
   imageUrl: text("image_url"),
+  expiresAt: timestamp("expires_at"),
+  expiryDuration: varchar("expiry_duration").default("1h"), // "15s" | "1min" | "5min" | "1h" | "24h" | "never"
+  deleteAfterRead: boolean("delete_after_read").default(false),
+  isRead: boolean("is_read").default(false),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -76,6 +80,8 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   roomId: true,
   type: true,
   imageUrl: true,
+  expiryDuration: true,
+  deleteAfterRead: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -97,6 +103,11 @@ export interface Message {
   type: 'user' | 'system' | 'image';
   imageUrl?: string;
   reactions?: MessageReaction[];
+  expiresAt?: Date;
+  expiryDuration?: string;
+  deleteAfterRead?: boolean;
+  isRead?: boolean;
+  timeRemaining?: number;
 }
 
 export interface MessageReaction {
