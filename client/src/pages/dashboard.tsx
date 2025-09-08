@@ -258,14 +258,18 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
 
         {/* Create Room Dialog */}
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-center text-xl">Créer une nouvelle room</DialogTitle>
+          <DialogContent className="max-w-md glass-card border-0">
+            <DialogHeader className="text-center pb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Plus className="w-8 h-8 text-white" />
+              </div>
+              <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">Créer une nouvelle room</DialogTitle>
+              <p className="text-gray-600 dark:text-gray-400">Configurez votre espace de discussion privé</p>
             </DialogHeader>
             
-            <div className="space-y-6 py-4">
+            <div className="space-y-6 py-2">
               <div>
-                <Label htmlFor="roomName" className="text-sm font-medium">
+                <Label htmlFor="roomName" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                   Nom de la room
                 </Label>
                 <Input
@@ -273,30 +277,32 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
                   value={newRoom.name}
                   onChange={(e) => setNewRoom(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Ma Super Room"
-                  className="mt-1"
+                  className="mt-2 h-12 text-lg border-2 focus:border-emerald-500 rounded-xl"
                   data-testid="input-room-name"
                 />
               </div>
 
               <div>
-                <Label className="text-sm font-medium">Type de room</Label>
+                <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Type de room</Label>
                 <RadioGroup
                   value={newRoom.type}
                   onValueChange={(value: 'public' | 'private') => 
                     setNewRoom(prev => ({ ...prev, type: value }))
                   }
-                  className="mt-2"
+                  className="mt-3 space-y-3"
                 >
-                  <Card className="p-3 cursor-pointer hover:bg-gray-50" onClick={() => setNewRoom(prev => ({ ...prev, type: 'public' }))}>
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="public" id="public" />
-                      <div className="flex items-center space-x-2 flex-1">
-                        <Globe className="w-5 h-5 text-green-500" />
+                  <Card className="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 border-2 hover:border-green-200 dark:hover:border-green-700 transition-all duration-200 rounded-xl" onClick={() => setNewRoom(prev => ({ ...prev, type: 'public' }))}>
+                    <div className="flex items-center space-x-4">
+                      <RadioGroupItem value="public" id="public" className="text-green-500" />
+                      <div className="flex items-center space-x-3 flex-1">
+                        <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center">
+                          <Globe className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        </div>
                         <div>
-                          <Label htmlFor="public" className="font-medium cursor-pointer">
+                          <Label htmlFor="public" className="font-semibold cursor-pointer text-gray-900 dark:text-white">
                             Room publique
                           </Label>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
                             Tout le monde peut rejoindre
                           </p>
                         </div>
@@ -304,16 +310,18 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
                     </div>
                   </Card>
 
-                  <Card className="p-3 cursor-pointer hover:bg-gray-50" onClick={() => setNewRoom(prev => ({ ...prev, type: 'private' }))}>
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="private" id="private" />
-                      <div className="flex items-center space-x-2 flex-1">
-                        <Lock className="w-5 h-5 text-blue-500" />
+                  <Card className="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 border-2 hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-200 rounded-xl" onClick={() => setNewRoom(prev => ({ ...prev, type: 'private' }))}>
+                    <div className="flex items-center space-x-4">
+                      <RadioGroupItem value="private" id="private" className="text-blue-500" />
+                      <div className="flex items-center space-x-3 flex-1">
+                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center">
+                          <Lock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        </div>
                         <div>
-                          <Label htmlFor="private" className="font-medium cursor-pointer">
+                          <Label htmlFor="private" className="font-semibold cursor-pointer text-gray-900 dark:text-white">
                             Room privée
                           </Label>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
                             Accès via lien uniquement
                           </p>
                         </div>
@@ -323,19 +331,20 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
                 </RadioGroup>
               </div>
 
-              <div className="flex space-x-3">
+              <div className="flex space-x-4 pt-4">
                 <Button
                   variant="outline"
                   onClick={() => setShowCreateDialog(false)}
-                  className="flex-1"
+                  className="flex-1 h-12 border-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Annuler
                 </Button>
                 <Button
                   onClick={handleCreateRoom}
-                  className="flex-1 gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200"
+                  className="flex-1 h-12 gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200 transform hover:scale-105 rounded-xl shadow-lg"
                   data-testid="button-create-room-confirm"
                 >
+                  <Plus className="w-4 h-4 mr-2" />
                   Créer
                 </Button>
               </div>
@@ -345,43 +354,50 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
 
         {/* Join Room Dialog */}
         <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center space-x-2">
-                <ExternalLink className="w-5 h-5 text-emerald-500" />
-                <span>Rejoindre une room</span>
+          <DialogContent className="sm:max-w-md glass-card border-0">
+            <DialogHeader className="text-center pb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <ExternalLink className="w-8 h-8 text-white" />
+              </div>
+              <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                Rejoindre une room
               </DialogTitle>
+              <p className="text-gray-600 dark:text-gray-400">Entrez le code d'invitation pour accéder à la conversation</p>
             </DialogHeader>
-            <div className="space-y-4 pt-4">
+            <div className="space-y-6 py-2">
               <div>
-                <Label className="text-sm font-medium">Code de la room</Label>
+                <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Code de la room</Label>
                 <Input
                   value={joinRoomCode}
                   onChange={(e) => setJoinRoomCode(e.target.value.toUpperCase())}
                   placeholder="Ex: ABC123"
-                  className="mt-2"
+                  className="mt-2 h-12 text-lg text-center font-mono border-2 focus:border-blue-500 rounded-xl tracking-widest"
                   onKeyPress={(e) => e.key === 'Enter' && handleJoinRoomByCode()}
                   data-testid="input-join-room-code"
+                  maxLength={8}
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Entrez le code de 6 caractères de la room
-                </p>
+                <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">
+                    📝 Le code est généralement composé de 6-8 caractères
+                  </p>
+                </div>
               </div>
 
-              <div className="flex space-x-3">
+              <div className="flex space-x-4 pt-4">
                 <Button
                   variant="outline"
                   onClick={() => setShowJoinDialog(false)}
-                  className="flex-1"
+                  className="flex-1 h-12 border-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Annuler
                 </Button>
                 <Button
                   onClick={handleJoinRoomByCode}
-                  className="flex-1 gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 h-12 gradient-emerald-cyan hover-gradient-emerald-cyan text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 rounded-xl shadow-lg"
                   disabled={!joinRoomCode.trim()}
                   data-testid="button-join-room-confirm"
                 >
+                  <ExternalLink className="w-4 h-4 mr-2" />
                   Rejoindre
                 </Button>
               </div>
