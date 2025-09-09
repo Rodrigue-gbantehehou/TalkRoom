@@ -74,21 +74,21 @@ export function ConversationsList({
     <div className="flex flex-col h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
       <div className="gradient-primary p-6 text-white shadow-2xl">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-white/25 rounded-3xl flex items-center justify-center shadow-xl backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/25 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-xl backdrop-blur-sm">
               <img 
                 src={logoUrl} 
                 alt="TalkRoom Logo" 
-                className="w-11 h-11 object-contain"
+                className="w-9 h-9 sm:w-11 sm:h-11 object-contain"
               />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">TalkRoom</h1>
-              <p className="text-sm text-white/90 font-medium">@{currentUser.username}</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">TalkRoom</h1>
+              <p className="text-xs sm:text-sm text-white/90 font-medium">@{currentUser.username}</p>
             </div>
           </div>
-          <div className="bg-white/20 rounded-2xl p-2">
+          <div className="bg-white/20 rounded-xl sm:rounded-2xl p-1.5 sm:p-2">
             <ThemeToggle />
           </div>
         </div>
@@ -115,15 +115,15 @@ export function ConversationsList({
           )}
         </div>
 
-        {/* Search */}
+        {/* Search - Simplifié sur mobile */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+          <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4 sm:w-5 sm:h-5" />
           <input
             type="text"
-            placeholder="Rechercher une conversation..."
+            placeholder={window.innerWidth < 640 ? "Rechercher..." : "Rechercher une conversation..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white/20 border border-white/30 rounded-2xl placeholder-white/70 text-white focus:outline-none focus:bg-white/30 focus:border-white/50 transition-all duration-200"
+            className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white/20 border border-white/30 rounded-xl sm:rounded-2xl placeholder-white/70 text-white focus:outline-none focus:bg-white/30 focus:border-white/50 transition-all duration-200 text-sm sm:text-base"
             data-testid="input-search-conversations"
           />
         </div>

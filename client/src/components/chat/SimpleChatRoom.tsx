@@ -144,22 +144,22 @@ export function SimpleChatRoom({
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
       <div className="gradient-primary shadow-2xl">
-        <div className="flex items-center justify-between p-6">
-          <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between p-4 sm:p-6">
+          <div className="flex items-center space-x-3 sm:space-x-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={onBack}
-              className="text-white hover:bg-white/20 transition-all duration-200 rounded-xl p-2"
+              className="text-white hover:bg-white/20 transition-all duration-200 rounded-lg sm:rounded-xl p-1.5 sm:p-2"
               data-testid="button-back"
             >
-              <ArrowLeft className="w-6 h-6" />
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-white">{roomName}</h1>
-              <div className="flex items-center space-x-3 mt-1">
-                <span className="font-mono bg-white/25 text-white px-3 py-1 rounded-xl text-sm font-semibold tracking-wider">{roomCode}</span>
-                <Badge className="bg-white/20 text-white border-white/30 rounded-xl px-3 py-1">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-2xl font-bold text-white truncate">{roomName}</h1>
+              <div className="flex items-center space-x-2 sm:space-x-3 mt-1">
+                <span className="font-mono bg-white/25 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold tracking-wider">{roomCode}</span>
+                <Badge className="hidden sm:flex bg-white/20 text-white border-white/30 rounded-xl px-3 py-1">
                   <Users className="w-4 h-4 mr-1" />
                   2 participants
                 </Badge>
@@ -170,27 +170,29 @@ export function SimpleChatRoom({
             variant="ghost"
             size="sm"
             onClick={onCopyLink}
-            className="text-white hover:bg-white/20 transition-all duration-200 rounded-xl px-4 py-2 font-semibold"
+            className="text-white hover:bg-white/20 transition-all duration-200 rounded-lg sm:rounded-xl px-2 sm:px-4 py-1.5 sm:py-2 font-semibold"
             data-testid="button-copy-link"
           >
-            <Share className="w-5 h-5 mr-2" />
-            Partager
+            <Share className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
+            <span className="hidden sm:inline">Partager</span>
           </Button>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 sm:space-y-4">
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500">
-            <div className="w-20 h-20 gradient-primary rounded-3xl flex items-center justify-center mb-6 shadow-xl">
-              <Shield className="w-10 h-10 text-white" />
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 px-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 gradient-primary rounded-2xl sm:rounded-3xl flex items-center justify-center mb-4 sm:mb-6 shadow-xl">
+              <Shield className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
-            <h3 className="text-2xl font-semibold mb-3 text-gray-800 dark:text-gray-200">Conversation sécurisée</h3>
-            <p className="text-center mb-6 max-w-md text-gray-600 dark:text-gray-400 leading-relaxed">
-              Vos messages sont chiffrés de bout en bout et disparaissent automatiquement selon la durée que vous définissez.
+            <h3 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-3 text-gray-800 dark:text-gray-200 text-center">Conversation sécurisée</h3>
+            <p className="text-center mb-4 sm:mb-6 max-w-xs sm:max-w-md text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+              Messages chiffrés qui disparaissent automatiquement
             </p>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            
+            {/* Version desktop */}
+            <div className="hidden sm:grid grid-cols-3 gap-4 text-center">
               <div className="modern-card p-4">
                 <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mx-auto mb-2">
                   <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
@@ -209,6 +211,18 @@ export function SimpleChatRoom({
                 </div>
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Privé</p>
               </div>
+            </div>
+            
+            {/* Version mobile compacte */}
+            <div className="sm:hidden flex justify-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+              <span className="flex items-center">
+                <Shield className="w-3 h-3 mr-1 text-green-500" />
+                Sécurisé
+              </span>
+              <span className="flex items-center">
+                <Clock className="w-3 h-3 mr-1 text-blue-500" />
+                Éphémère
+              </span>
             </div>
           </div>
         ) : (
@@ -277,32 +291,44 @@ export function SimpleChatRoom({
       </div>
 
       {/* Message Input */}
-      <div className="p-6 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-        <div className="space-y-4">
-          <MessageExpirySelector
-            selectedDuration={expiryDuration}
-            onDurationChange={setExpiryDuration}
-            deleteAfterRead={deleteAfterRead}
-            onDeleteAfterReadChange={setDeleteAfterRead}
-          />
-          <div className="flex space-x-4">
+      <div className="p-3 sm:p-6 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div className="space-y-3 sm:space-y-4">
+          {/* Masquer les paramètres d'expiration sur mobile pour plus d'aération */}
+          <div className="hidden sm:block">
+            <MessageExpirySelector
+              selectedDuration={expiryDuration}
+              onDurationChange={setExpiryDuration}
+              deleteAfterRead={deleteAfterRead}
+              onDeleteAfterReadChange={setDeleteAfterRead}
+            />
+          </div>
+          
+          <div className="flex space-x-2 sm:space-x-4">
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Tapez votre message..."
-              className="flex-1 h-14 rounded-2xl border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 bg-gray-50 dark:bg-gray-700 focus:bg-white dark:focus:bg-gray-650 text-lg px-6"
+              className="flex-1 h-12 sm:h-14 rounded-xl sm:rounded-2xl border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 bg-gray-50 dark:bg-gray-700 focus:bg-white dark:focus:bg-gray-650 text-base sm:text-lg px-4 sm:px-6"
               disabled={isLoading}
               data-testid="input-message"
             />
             <Button
               onClick={sendMessage}
               disabled={!newMessage.trim() || isLoading}
-              className="h-14 w-14 gradient-primary hover:opacity-90 transition-all duration-200 transform hover:scale-105 rounded-2xl shadow-xl"
+              className="h-12 w-12 sm:h-14 sm:w-14 gradient-primary hover:opacity-90 transition-all duration-200 transform hover:scale-105 rounded-xl sm:rounded-2xl shadow-xl"
               data-testid="button-send-message"
             >
-              <Send className="w-6 h-6 text-white" />
+              <Send className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </Button>
+          </div>
+          
+          {/* Paramètres d'expiration pour mobile - version compacte */}
+          <div className="sm:hidden">
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <span>Expiration: {formatExpiryTime(expiryDuration)}</span>
+              {deleteAfterRead && <span>🔒 Lecture unique</span>}
+            </div>
           </div>
         </div>
       </div>

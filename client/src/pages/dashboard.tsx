@@ -208,10 +208,10 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
                   className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain"
                 />
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 text-gray-900 dark:text-white">
                 Bienvenue, {currentUser.displayName}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg font-medium mb-4 sm:mb-6 px-2">
+              <p className="hidden sm:block text-gray-600 dark:text-gray-400 text-base sm:text-lg font-medium mb-4 sm:mb-6 px-2">
                 Commencez une nouvelle conversation ou rejoignez-en une existante
               </p>
             </div>
@@ -249,26 +249,39 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
               </div>
             </div>
 
-            {/* Features Grid */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
-              <div className="modern-card p-3 sm:p-4">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 dark:bg-green-900 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1 sm:mb-2">
-                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 dark:text-green-400" />
+            {/* Features Grid - Masqué sur mobile pour plus d'aération */}
+            <div className="hidden sm:grid grid-cols-3 gap-4 text-center">
+              <div className="modern-card p-4">
+                <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
                 </div>
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Chiffré</p>
               </div>
-              <div className="modern-card p-3 sm:p-4">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 dark:bg-blue-900 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1 sm:mb-2">
-                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400" />
+              <div className="modern-card p-4">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Éphémère</p>
               </div>
-              <div className="modern-card p-3 sm:p-4">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 dark:bg-purple-900 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1 sm:mb-2">
-                  <Users className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400" />
+              <div className="modern-card p-4">
+                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                 </div>
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Anonyme</p>
               </div>
+            </div>
+            
+            {/* Version mobile compacte */}
+            <div className="sm:hidden flex justify-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+              <span className="flex items-center">
+                <Shield className="w-3 h-3 mr-1 text-green-500" />
+                Sécurisé
+              </span>
+              <span className="mx-2">•</span>
+              <span className="flex items-center">
+                <Clock className="w-3 h-3 mr-1 text-blue-500" />
+                Éphémère
+              </span>
             </div>
           </div>
         </div>
