@@ -1,0 +1,263 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Modern TalkRoom Design System */
+  --background: hsl(240, 10%, 98%);
+  --foreground: hsl(240, 10%, 4%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(240, 10%, 4%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(240, 10%, 4%);
+  
+  /* Primary Blue (from logo) */
+  --primary: hsl(218, 100%, 60%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --primary-light: hsl(218, 100%, 85%);
+  --primary-dark: hsl(218, 100%, 45%);
+  
+  /* Secondary Colors */
+  --secondary: hsl(240, 5%, 96%);
+  --secondary-foreground: hsl(240, 6%, 10%);
+  --accent: hsl(240, 5%, 94%);
+  --accent-foreground: hsl(240, 6%, 10%);
+  
+  /* Surface Colors */
+  --surface: hsl(0, 0%, 100%);
+  --surface-variant: hsl(240, 6%, 97%);
+  --surface-hover: hsl(240, 6%, 94%);
+  
+  /* Text Colors */
+  --text-primary: hsl(240, 10%, 4%);
+  --text-secondary: hsl(240, 5%, 64%);
+  --text-tertiary: hsl(240, 4%, 46%);
+  
+  /* Utility */
+  --muted: hsl(240, 5%, 96%);
+  --muted-foreground: hsl(240, 4%, 46%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 6%, 90%);
+  --input: hsl(240, 6%, 90%);
+  --ring: hsl(218, 100%, 60%);
+  
+  /* Brand Specific */
+  --brand-gradient: linear-gradient(135deg, hsl(218, 100%, 60%) 0%, hsl(270, 100%, 70%) 100%);
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --radius: 12px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+  /* Dark Mode TalkRoom Design */
+  --background: hsl(240, 10%, 4%);
+  --foreground: hsl(240, 5%, 96%);
+  --card: hsl(240, 10%, 7%);
+  --card-foreground: hsl(240, 5%, 96%);
+  --popover: hsl(240, 10%, 7%);
+  --popover-foreground: hsl(240, 5%, 96%);
+  
+  /* Primary remains consistent */
+  --primary: hsl(218, 100%, 65%);
+  --primary-foreground: hsl(240, 10%, 4%);
+  --primary-light: hsl(218, 100%, 80%);
+  --primary-dark: hsl(218, 100%, 50%);
+  
+  /* Dark Surface Colors */
+  --secondary: hsl(240, 4%, 16%);
+  --secondary-foreground: hsl(240, 5%, 84%);
+  --accent: hsl(240, 4%, 16%);
+  --accent-foreground: hsl(240, 5%, 84%);
+  
+  --surface: hsl(240, 10%, 7%);
+  --surface-variant: hsl(240, 6%, 10%);
+  --surface-hover: hsl(240, 6%, 14%);
+  
+  /* Dark Text */
+  --text-primary: hsl(240, 5%, 96%);
+  --text-secondary: hsl(240, 5%, 64%);
+  --text-tertiary: hsl(240, 4%, 46%);
+  
+  --muted: hsl(240, 4%, 16%);
+  --muted-foreground: hsl(240, 5%, 64%);
+  --destructive: hsl(0, 62%, 30%);
+  --destructive-foreground: hsl(0, 85%, 96%);
+  --border: hsl(240, 6%, 20%);
+  --input: hsl(240, 6%, 20%);
+  --ring: hsl(218, 100%, 65%);
+  
+  --glass-bg: rgba(0, 0, 0, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Modern Gradient System */
+  .gradient-primary {
+    background: var(--brand-gradient);
+  }
+
+  .gradient-primary:hover {
+    background: linear-gradient(135deg, hsl(218, 100%, 55%) 0%, hsl(270, 100%, 65%) 100%);
+  }
+
+  .gradient-surface {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-variant) 100%);
+  }
+
+  .glass-morphism {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+  }
+
+  .modern-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+  }
+
+  .modern-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .floating-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .glass-effect {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Scrollbar personnalisé pour WebKit */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .scrollbar-track-white\/10::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+  }
+  
+  .scrollbar-thumb-purple-500\/50::-webkit-scrollbar-thumb {
+    background-color: rgba(168, 85, 247, 0.5);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  
+  .hover\:scrollbar-thumb-purple-500\/70:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(168, 85, 247, 0.7);
+  }
+
+  .message-bubble {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 2s infinite;
+  }
+
+  .animate-typing {
+    animation: typing 1.5s infinite;
+  }
+
+  .animate-fade-in-out {
+    animation: fadeInOut 2s infinite;
+  }
+
+  .animate-bounce-slow {
+    animation: bounce 2s infinite;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .glass-card {
+    background: rgba(31, 41, 55, 0.95);
+    border: 1px solid rgba(75, 85, 99, 0.2);
+  }
+
+  @keyframes slideIn {
+    0% { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    100% { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  @keyframes typing {
+    0%, 100% { 
+      opacity: 0.5; 
+    }
+    50% { 
+      opacity: 1; 
+    }
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% { 
+      opacity: 0.5; 
+    }
+    50% { 
+      opacity: 1; 
+    }
+  }
+
+  @keyframes scaleIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}

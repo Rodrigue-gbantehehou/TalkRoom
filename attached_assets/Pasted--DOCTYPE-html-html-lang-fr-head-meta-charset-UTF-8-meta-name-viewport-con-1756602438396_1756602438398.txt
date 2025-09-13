@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Messagerie - Chat en Temps Réel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .connection-status {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .login-section, .chat-section {
+            padding: 30px;
+        }
+
+        .login-section {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #ff7b7b, #ff9a56);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(255, 123, 123, 0.4);
+        }
+
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            height: 500px;
+        }
+
+        .messages-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 12px;
+            max-width: 70%;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.own {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.other {
+            background: white;
+            border: 1px solid #e0e0e0;
+            margin-right: auto;
+        }
+
+        .message.system {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            margin: 0 auto;
+            text-align: center;
+            max-width: 90%;
+            font-style: italic;
+        }
+
+        .message-info {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .message-content {
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .message-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-form input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+        }
+
+        .message-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .users-list, .room-info {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .users-list h3, .room-info h3 {
+            margin-bottom: 10px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .user-item:hover {
+            transform: translateX(5px);
+        }
+
+        .user-item.online {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+        }
+
+        .room-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .sharing-section {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .share-link {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            margin: 10px 0;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        .typing-indicator {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 10px;
+            animation: fadeInOut 2s infinite;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
+                height: 600px;
+            }
+            
+            .sidebar {
+                order: -1;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            
+            .users-list, .room-info {
+                min-width: 200px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .connection-status, .user-info {
+                position: static;
+                text-align: center;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="connection-status">
+                <div class="status-dot"></div>
+                <span>En ligne</span>
+            </div>
+            <h1>💬 Mini Messagerie</h1>
+            <div class="user-info" id="userInfo"></div>
+        </div>
+
+        <!-- Section de connexion -->
+        <div class="login-section" id="loginSection">
+            <h2>🚀 Rejoindre le Chat</h2>
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur:</label>
+                <input type="text" id="username" placeholder="Entrez votre nom" maxlength="20">
+            </div>
+            <div class="form-group">
+                <label for="roomId">Code de la salle:</label>
+                <input type="text" id="roomId" placeholder="Laissez vide pour créer une nouvelle salle">
+            </div>
+            <div class="form-group">
+                <label for="userType">Type d'utilisateur:</label>
+                <select id="userType">
+                    <option value="user">Utilisateur</option>
+                    <option value="admin">Administrateur</option>
+                </select>
+            </div>
+            <button class="btn" onclick="joinChat()">Rejoindre le Chat</button>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                <h3>📋 Comment partager ?</h3>
+                <p style="color: #666; margin-top: 10px;">
+                    Une fois connecté, vous obtiendrez un code de salle à partager avec vos amis !
+                </p>
+            </div>
+        </div>
+
+        <!-- Section de chat -->
+        <div class="chat-section hidden" id="chatSection">
+            <div class="chat-container">
+                <div class="messages-section">
+                    <div class="messages-container" id="messagesContainer">
+                        <div class="message system">
+                            <div class="message-info">Système • Maintenant</div>
+                            <div class="message-content">Bienvenue dans la messagerie ! 🎉</div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator hidden" id="typingIndicator">
+                        <span id="typingText"></span>
+                    </div>
+                    
+                    <div class="message-form">
+                        <input type="text" id="messageInput" placeholder="Tapez votre message..." 
+                               onkeypress="handleKeyPress(event)" oninput="handleTyping()">
+                        <button class="btn" onclick="sendMessage()">📤</button>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="sharing-section">
+                        <h3>🔗 Partager cette salle</h3>
+                        <div class="share-link" id="shareLink">Code: </div>
+                        <button class="btn" onclick="copyRoomCode()" style="background: rgba(255,255,255,0.2);">
+                            📋 Copier le code
+                        </button>
+                    </div>
+
+                    <div class="room-info">
+                        <h3>📊 Statistiques</h3>
+                        <div class="room-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="messageCount">0</div>
+                                <div class="stat-label">Messages</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="userCount">0</div>
+                                <div class="stat-label">Utilisateurs</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="users-list">
+                        <h3>👥 Utilisateurs (<span id="onlineCount">0</span>)</h3>
+                        <div id="usersList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-secondary btn" onclick="leaveChat()">🚪 Quitter</button>
+                <button class="btn" onclick="clearMessages()" id="clearBtn" style="display: none;">🗑️ Effacer</button>
+                <button class="btn" onclick="exportChat()">📥 Exporter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation d'une base de données partagée avec synchronisation cross-tab
+        class SharedChatDB {
+            constructor() {
+                this.storageKey = 'miniChatDB';
+                this.currentUser = null;
+                this.currentRoom = null;
+                this.initializeDB();
+                this.setupStorageListener();
+                this.typingTimeout = null;
+            }
+
+            initializeDB() {
+                if (!localStorage.getItem(this.storageKey)) {
+                    const initialData = {
+                        rooms: {},
+                        globalStats: {
+                            totalRooms: 0,
+                            totalUsers: 0
+                        }
+                    };
+                    localStorage.setItem(this.storageKey, JSON.stringify(initialData));
+                }
+            }
+
+            setupStorageListener() {
+                window.addEventListener('storage', (e) => {
+                    if (e.key === this.storageKey) {
+                        this.onDataChange();
+                    }
+                });
+
+                // Simulation de mise à jour en temps réel
+                setInterval(() => {
+                    this.updateUserActivity();
+                    this.onDataChange();
+                }, 2000);
+            }
+
+            getData() {
+                return JSON.parse(localStorage.getItem(this.storageKey));
+            }
+
+            saveData(data) {
+                localStorage.setItem(this.storageKey, JSON.stringify(data));
+                // Déclencher un événement personnalisé pour la même tab
+                window.dispatchEvent(new CustomEvent('chatDataUpdate'));
+            }
+
+            createRoom(roomId = null) {
+                const data = this.getData();
+                if (!roomId) {
+                    roomId = 'room_' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                }
+
+                if (!data.rooms[roomId]) {
+                    data.rooms[roomId] = {
+                        id: roomId,
+                        messages: [],
+                        users: [],
+                        createdAt: new Date().toISOString(),
+                        lastActivity: new Date().toISOString()
+                    };
+                    data.globalStats.totalRooms++;
+                    this.saveData(data);
+                }
+
+                return roomId;
+            }
+
+            joinRoom(roomId, username, userType) {
+                const data = this.getData();
+                
+                if (!data.rooms[roomId]) {
+                    return null;
+                }
+
+                const room = data.rooms[roomId];
+                
+                // Supprimer l'utilisateur s'il existe déjà
+                room.users = room.users.filter(u => u.username !== username);
+                
+                const user = {
+                    id: Date.now() + Math.random(),
+                    username: username,
+                    type: userType,
+                    joinedAt: new Date().toISOString(),
+                    lastSeen: new Date().toISOString(),
+                    online: true
+                };
+
+                room.users.push(user);
+                room.lastActivity = new Date().toISOString();
+
+                // Ajouter message de connexion
+                room.messages.push({
+                    id: Date.now() + Math.random(),
+                    userId: 0,
+                    username: 'Système',
+                    content: `${username} a rejoint la salle 👋`,
+                    timestamp: new Date().toISOString(),
+                    type: 'system'
+                });
+
+                this.saveData(data);
+                this.currentUser = user;
+                this.currentRoom = roomId;
+
+                return { user, roomId };
+            }
+
+            addMessage(roomId, userId, username, content) {
+                const data = this.getData();
+                const room = data.rooms[roomId];
+
+                if (!room) return null;
+
+                const message = {
+                    id: Date.now() + Math.random(),
+                    userId: userId,
+                    username: username,
+                    content: content,
+                    timestamp: new Date().toISOString(),
+                    type: 'user'
+                };
+
+                room.messages.push(message);
+                room.lastActivity = new Date().toISOString();
+                this.saveData(data);
+
+                // Afficher notification pour les autres utilisateurs
+                this.showNotification(`${username}: ${content.substring(0, 50)}${content.length > 50 ? '...' : ''}`);
+
+                return message;
+            }
+
+            getMessages(roomId) {
+                const data = this.getData();
+                return data.rooms[roomId]?.messages || [];
+            }
+
+            getOnlineUsers(roomId) {
+                const data = this.getData();
+                const room = data.rooms[roomId];
+                if (!room) return [];
+
+                const now = Date.now();
+                return room.users.filter(user => {
+                    const lastSeen = new Date(user.lastSeen).getTime();
+                    return (now - lastSeen) < 10000; // Considéré en ligne si vu dans les 10 dernières secondes
+                });
+            }
+
+            updateUserActivity() {
+                if (!this.currentUser || !this.currentRoom) return;
+
+                const data = this.getData();
+                const room = data.rooms[this.currentRoom];
+                if (!room) return;
+
+                const user = room.users.find(u => u.id === this.currentUser.id);
+                if (user) {
+                    user.lastSeen = new Date().toISOString();
+                    user.online = true;
+                    this.saveData(data);
+                }
+            }
+
+            leaveRoom(roomId, userId) {
+                const data = this.getData();
+                const room = data.rooms[roomId];
+                if (!room) return;
+
+                const user = room.users.find(u => u.id === userId);
+                if (user) {
+                    // Ajouter message de déconnexion
+                    room.messages.push({
+                        id: Date.now() + Math.random(),
+                        userId: 0,
+                        username: 'Système',
+                        content: `${user.username} a quitté la salle 👋`,
+                        timestamp: new Date().toISOString(),
+                        type: 'system'
+                    });
+
+                    // Marquer comme hors ligne au lieu de supprimer
+                    user.online = false;
+                    user.lastSeen = new Date().toISOString();
+                }
+
+                this.saveData(data);
+            }
+
+            clearMessages(roomId) {
+                const data = this.getData();
+                const room = data.rooms[roomId];
+                if (!room) return;
+
+                room.messages = [{
+                    id: Date.now(),
+                    userId: 0,
+                    username: 'Système',
+                    content: 'Messages effacés par un administrateur 🗑️',
+                    timestamp: new Date().toISOString(),
+                    type: 'system'
+                }];
+
+                this.saveData(data);
+            }
+
+            onDataChange() {
+                if (this.currentRoom) {
+                    updateMessages();
+                    updateUsersList();
+                    updateStats();
+                }
+            }
+
+            showNotification(message) {
+                // Ne pas montrer de notification pour ses propres messages
+                if (this.currentUser && message.includes(this.currentUser.username + ':')) {
+                    return;
+                }
+
+                // Créer une notification
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.innerHTML = `
+                    <div style="font-weight: bold;">💬 Nouveau message</div>
+                    <div style="margin-top: 5px; opacity: 0.9;">${message}</div>
+                `;
+
+                document.body.appendChild(notification);
+
+                // Supprimer après 4 secondes
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 4000);
+            }
+        }
+
+        // Instance de la base de données partagée
+        const chatDB = new SharedChatDB();
+        let currentUser = null;
+        let currentRoom = null;
+
+        function joinChat() {
+            const username = document.getElementById('username').value.trim();
+            const roomId = document.getElementById('roomId').value.trim();
+            const userType = document.getElementById('userType').value;
+
+            if (!username) {
+                alert('Veuillez entrer un nom d\'utilisateur');
+                return;
+            }
+
+            let targetRoomId = roomId || chatDB.createRoom();
+
+            const result = chatDB.joinRoom(targetRoomId, username, userType);
+            
+            if (!result) {
+                alert('Impossible de rejoindre cette salle. Vérifiez le code.');
+                return;
+            }
+
+            currentUser = result.user;
+            currentRoom = result.roomId;
+
+            // Mettre à jour l'interface
+            document.getElementById('userInfo').textContent = `${currentUser.username} (${currentUser.type})`;
+            document.getElementById('shareLink').textContent = `Code: ${currentRoom}`;
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('chatSection').classList.remove('hidden');
+
+            // Afficher le bouton d'effacement pour les admins
+            if (currentUser.type === 'admin') {
+                document.getElementById('clearBtn').style.display = 'inline-block';
+            }
+
+            // Mettre à jour l'affichage
+            updateMessages();
+            updateUsersList();
+            updateStats();
+
+            // Focus sur le champ de message
+            document.getElementById('messageInput').focus();
+
+            // Configurer la détection de frappe
+            setupTypingDetection();
+        }
+
+        function leaveChat() {
+            if (currentUser && currentRoom) {
+                chatDB.leaveRoom(currentRoom, currentUser.id);
+                currentUser = null;
+                currentRoom = null;
+            }
+
+            // Réinitialiser l'interface
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('chatSection').classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('roomId').value = '';
+            document.getElementById('userInfo').textContent = '';
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const content = messageInput.value.trim();
+
+            if (!content || !currentUser || !currentRoom) {
+                return;
+            }
+
+            // Ajouter le message à la base de données
+            chatDB.addMessage(currentRoom, currentUser.id, currentUser.username, content);
+
+            // Vider le champ de saisie
+            messageInput.value = '';
+
+            // Mettre à jour l'affichage
+            updateMessages();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function handleTyping() {
+            // Simulation d'indicateur de frappe (simplifié)
+            if (chatDB.typingTimeout) {
+                clearTimeout(chatDB.typingTimeout);
+            }
+            
+            chatDB.typingTimeout = setTimeout(() => {
+                // L'utilisateur a arrêté de taper
+            }, 1000);
+        }
+
+        function setupTypingDetection() {
+            // Configuration pour la détection de frappe
+        }
+
+        function updateMessages() {
+            const container = document.getElementById('messagesContainer');
+            const messages = chatDB.getMessages(currentRoom);
+
+            container.innerHTML = '';
+
+            messages.slice(-50).forEach(message => { // Limiter à 50 derniers messages
+                const messageDiv = document.createElement('div');
+                const isOwnMessage = currentUser && message.userId === currentUser.id;
+                const isSystem = message.type === 'system';
+
+                messageDiv.className = `message ${isSystem ? 'system' : (isOwnMessage ? 'own' : 'other')}`;
+
+                const time = new Date(message.timestamp);
+                const timeStr = time.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                messageDiv.innerHTML = `
+                    <div class="message-info">${message.username} • ${timeStr}</div>
+                    <div class="message-content">${escapeHtml(message.content)}</div>
+                `;
+
+                container.appendChild(messageDiv);
+            });
+
+            // Faire défiler vers le bas
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateUsersList() {
+            const usersList = document.getElementById('usersList');
+            const onlineUsers = chatDB.getOnlineUsers(currentRoom);
+
+            usersList.innerHTML = '';
+            document.getElementById('onlineCount').textContent = onlineUsers.length;
+
+            onlineUsers.forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-item online';
+                userDiv.innerHTML = `
+                    <span>${user.username} ${user.type === 'admin' ? '👑' : '👤'}</span>
+                    <span class="status-indicator"></span>
+                `;
+                usersList.appendChild(userDiv);
+            });
+        }
+
+        function updateStats() {
+            const messages = chatDB.getMessages(currentRoom);
+            const users = chatDB.getOnlineUsers(currentRoom);
+
+            document.getElementById('messageCount').textContent = messages.length;
+            document.getElementById('userCount').textContent = users.length;
+        }
+
+        function copyRoomCode() {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(currentRoom).then(() => {
+                    showTemporaryMessage('Code copié ! 📋');
+                });
+            } else {
+                // Fallback pour les navigateurs plus anciens
+                const textArea = document.createElement('textarea');
+                textArea.value = currentRoom;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showTemporaryMessage('Code copié ! 📋');
+            }
+        }
+
+        function clearMessages() {
+            if (currentUser && currentUser.type === 'admin') {
+                if (confirm('Êtes-vous sûr de vouloir effacer tous les messages ?')) {
+                    chatDB.clearMessages(currentRoom);
+                    updateMessages();
+                }
+            }
+        }
+
+        function exportChat() {
+            const messages = chatDB.getMessages(currentRoom);
+            let chatText = `=== Export du Chat - Salle ${currentRoom} ===\n`;
+            chatText += `Date: ${new Date().toLocaleString('fr-FR')}\n\n`;
+
+            messages.forEach(msg => {
+                const time = new Date(msg.timestamp).toLocaleString('fr-FR');
+                chatText += `[${time}] ${msg.username}: ${msg.content}\n`;
+            });
+
+            const blob = new Blob([chatText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chat-${currentRoom}-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showTemporaryMessage('Chat exporté ! 📥');
+        }
+
+        function showTemporaryMessage(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Gestion des événements de mise à jour
+        window.addEventListener('chatDataUpdate', () => {
+            if (currentRoom) {
+                updateMessages();
+                updateUsersList();
+                updateStats();
+            }
+        });
+
+        // Gestion de la fermeture de la page
+        window.addEventListener('beforeunload', () => {
+            if (currentUser && currentRoom) {
+                chatDB.leaveRoom(currentRoom, currentUser.id);
+            }
+        });
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Mini site de messagerie partagée chargé');
+            
+            // Auto-focus sur le champ nom d'utilisateur
+            document.getElementById('username').focus();
+            
+            // Gestion du collage du code de salle
+            document.getElementById('roomId').addEventListener('paste', (e) => {
+                setTimeout(() => {
+                    const pastedText = e.target.value.trim().toUpperCase();
+                    if (pastedText) {
+                        e.target.value = pastedText;
+                    }
+                }, 10);
+            });
+        });
+
+        // Easter egg - Commandes spéciales
+        document.getElementById('messageInput').addEventListener('input', (e) => {
+            const value = e.target.value.toLowerCase();
+            
+            if (value === '/help') {
+                setTimeout(() => {
+                    e.target.value = '';
+                    chatDB.addMessage(currentRoom, 0, 'Assistant', 
+                        'Commandes disponibles:\n' +
+                        '• /clear - Effacer vos messages (admin uniquement)\n' +
+                        '• /users - Voir les utilisateurs\n' +
+                        '• /time - Afficher l\'heure\n' +
+                        '• /stats - Statistiques de la salle'
+                    );
+                    updateMessages();
+                }, 100);
+            } else if (value === '/time') {
+                setTimeout(() => {
+                    e.target.value = '';
+                    chatDB.addMessage(currentRoom, 0, 'Assistant', 
+                        `Il est ${new Date().toLocaleTimeString('fr-FR')} ⏰`
+                    );
+                    updateMessages();
+                }, 100);
+            } else if (value === '/stats') {
+                setTimeout(() => {
+                    e.target.value = '';
+                    const messages = chatDB.getMessages(currentRoom);
+                    const users = chatDB.getOnlineUsers(currentRoom);
+                    chatDB.addMessage(currentRoom, 0, 'Assistant', 
+                        `📊 Statistiques:\n` +
+                        `• ${messages.length} messages envoyés\n` +
+                        `• ${users.length} utilisateurs connectés\n` +
+                        `• Salle créée: ${new Date(chatDB.getData().rooms[currentRoom]?.createdAt).toLocaleDateString('fr-FR')}`
+                    );
+                    updateMessages();
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+Cahier des Charges – Mini Messagerie Éphémère P2P
+1️⃣ Titre du projet
+
+Mini Messagerie Éphémère P2P et Sécurisée
+
+2️⃣ Contexte et justification
+
+Les messageries traditionnelles stockent souvent les données sur des serveurs centralisés, ce qui pose des problèmes de confidentialité et de sécurité. L’objectif de ce projet est de créer une messagerie indépendante, éphémère et sécurisée, où les messages ne sont pas stockés sur des serveurs, mais uniquement côté utilisateur, avec chiffrement, compression et communication peer-to-peer.
+
+3️⃣ Objectifs du projet
+
+Offrir une messagerie instantanée fonctionnelle entre plusieurs utilisateurs.
+
+Garantir que les messages soient éphémères et temporaires, disparaissant après la déconnexion ou après un temps défini.
+
+Implémenter une communication P2P pour éviter le stockage centralisé.
+
+Assurer la sécurité et confidentialité via chiffrement AES-GCM côté client.
+
+Optimiser les échanges avec compression des messages.
+
+Maintenir une interface conviviale et responsive accessible depuis navigateur.
+
+4️⃣ Périmètre fonctionnel
+4.1 Gestion des utilisateurs
+
+Saisie du nom d’utilisateur et choix du type (Utilisateur/Admin).
+
+Connexion à une salle existante ou création d’une nouvelle salle.
+
+Affichage de la liste des utilisateurs connectés en temps réel.
+
+4.2 Gestion des salles
+
+Génération automatique d’un code de salle unique pour inviter d’autres participants.
+
+Possibilité pour l’admin de supprimer tous les messages de la salle.
+
+Possibilité d’exporter la conversation tant que la salle est active.
+
+4.3 Messagerie
+
+Envoi et réception de messages en temps réel via WebRTC P2P.
+
+Messages compressés avant envoi et décompressés à la réception.
+
+Messages chiffrés pour garantir la confidentialité.
+
+Support de messages système pour notifications (ex: utilisateur rejoint ou quitte).
+
+Limitation du nombre de messages visibles pour éviter surcharge mémoire.
+
+4.4 Éphémérité
+
+Les messages sont stockés uniquement en mémoire vive côté client.
+
+Les messages disparaissent à la déconnexion ou après un délai paramétrable.
+
+4.5 Interface utilisateur
+
+Interface responsive adaptée aux desktop et mobiles.
+
+Affichage des messages avec distinction propre message / message des autres / message système.
+
+Indicateur de frappe pour voir quand un utilisateur écrit un message.
+
+Statistiques de la salle : nombre de messages et utilisateurs connectés.
+
+5️⃣ Contraintes techniques
+
+Technologies front-end : HTML, CSS, JavaScript.
+
+Communication P2P : WebRTC DataChannel.
+
+Signalisation initiale : serveur WebSocket léger.
+
+Chiffrement : AES-GCM via crypto.subtle.
+
+Compression : lz-string ou pako.
+
+Stockage : uniquement en mémoire côté client.
+
+Responsivité : adaptable sur tous types d’écrans.
+
+6️⃣ Contraintes de sécurité
+
+La clé de chiffrement est générée dynamiquement pour chaque salle.
+
+Les messages ne sont jamais envoyés en clair sur un serveur.
+
+Les messages ne sont pas stockés dans le navigateur de façon persistante (localStorage ou cookies).
+
+7️⃣ Livrables
+
+Interface web fonctionnelle (desktop et mobile).
+
+Module de communication P2P sécurisé.
+
+Gestion des salles et utilisateurs.
+
+Fonctionnalités de compression, chiffrement et éphémérité des messages.
+
+Documentation technique et mode d’emploi pour l’utilisateur.
+
+8️⃣ Évolutions possibles
+
+Notifications push locales ou navigateur.
+
+Possibilité de messages audio/vidéo via WebRTC.
+
+Gestion de plusieurs salles simultanées.
+
+Interface graphique plus avancée (thèmes, emojis…).
