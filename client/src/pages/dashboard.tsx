@@ -207,7 +207,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-20 h-20   flex items-center justify-center">
-              <img src="/public/logo.png" alt="TalkRoom" className="" />
+              <img src="/logo.png" alt="TalkRoom" className="" />
             </div>
             <span className="text-white font-medium">{currentUser.displayName}</span>
           </div>
