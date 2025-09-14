@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { MessageCircle, Plus, Users, Settings, LogOut, Copy, Share, UserPlus, Crown, Shield, Trash2, X, Search, Menu, Lock, ExternalLink } from 'lucide-react';
 import { authService } from '@/lib/auth';
-import { ConversationsList } from '@/components/chat/ConversationsList';
+import { ConversationsList } from '@/components/conversations/ConversationsList';
 import { ChatProvider } from '@/context/ChatContext';
 import { API_URL } from '@/config';
 
