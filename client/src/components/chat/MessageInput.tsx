@@ -82,9 +82,9 @@ export function MessageInput({ onSendMessage, onTypingStart, onTypingStop, disab
   };
 
   return (
-    <div className="border-t bg-white">
-      {/* Expiry Settings Bar */}
-      <div className="px-4 py-2 bg-gray-50 border-b">
+    <div className="border-t bg-white/10 backdrop-blur-sm border-white/20">
+      {/* Expiry Settings Bar - Hidden on small screens */}
+      <div className="hidden sm:block px-4 py-2 bg-white/5 border-b border-white/10">
         <MessageExpirySelector
           selectedDuration={expiryDuration}
           onDurationChange={setExpiryDuration}
@@ -94,20 +94,20 @@ export function MessageInput({ onSendMessage, onTypingStart, onTypingStop, disab
       </div>
 
       {/* Message Input */}
-      <div className="relative p-4">
-        <form onSubmit={handleSubmit} className="flex items-end space-x-2">
+      <div className="relative p-3 sm:p-4">
+        <form onSubmit={handleSubmit} className="flex items-end space-x-2 sm:space-x-3">
           <div className="flex-1">
-            <div className="flex items-center space-x-2 bg-gray-100 rounded-full px-4 py-2">
+            <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 sm:px-4 py-2 sm:py-3">
               {/* Emoji Button */}
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className="h-8 w-8 p-0 hover:bg-gray-200"
+                className="h-7 w-7 sm:h-8 sm:w-8 p-0 hover:bg-white/20 text-white/70 hover:text-white"
                 data-testid="button-emoji"
               >
-                <Smile className="w-5 h-5 text-gray-500" />
+                <Smile className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
 
               {/* Message Input */}
@@ -118,13 +118,20 @@ export function MessageInput({ onSendMessage, onTypingStart, onTypingStop, disab
                 onKeyPress={handleKeyPress}
                 placeholder="Tapez votre message..."
                 disabled={disabled}
-                className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none p-0 text-sm"
+                className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none p-0 text-sm sm:text-base text-white placeholder-white/50"
                 data-testid="input-message"
               />
 
               {/* Image Upload */}
-              <ImageUpload onImageSelect={handleImageSelect} />
+              <div className="hidden sm:block">
+                <ImageUpload onImageSelect={handleImageSelect} />
+              </div>
             </div>
+          </div>
+
+          {/* Mobile Image Upload */}
+          <div className="sm:hidden">
+            <ImageUpload onImageSelect={handleImageSelect} />
           </div>
 
           {/* Send Button */}
@@ -132,10 +139,10 @@ export function MessageInput({ onSendMessage, onTypingStart, onTypingStop, disab
             type="submit"
             size="sm"
             disabled={disabled || !message.trim()}
-            className="h-10 w-10 p-0 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-10 w-10 sm:h-12 sm:w-12 p-0 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             data-testid="button-send"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </form>
 

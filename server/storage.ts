@@ -17,7 +17,7 @@ export class DbStorage {
       .from("users")
       .select("*")
       .eq("id", id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   }
@@ -27,7 +27,7 @@ export class DbStorage {
       .from("users")
       .select("*")
       .eq("username", username)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   }
@@ -37,23 +37,26 @@ export class DbStorage {
       .from("users")
       .insert({
         username: insertUser.username,
-        displayname: insertUser.displayName ?? null,
-        avatarurl: insertUser.avatarUrl ?? null,
+        password: insertUser.password ?? null,
+        display_name: insertUser.displayName ?? null,
+        avatar_url: insertUser.avatarUrl ?? null,
         bio: insertUser.bio ?? null,
-        isonline: false,
-        lastseen: new Date().toISOString(),
-        createdat: new Date().toISOString(),
+        is_online: false,
+        last_seen: new Date().toISOString(),
+        created_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .maybeSingle();
+
     if (error) throw error;
-    return data!;
+    if (!data) throw new Error("Failed to create user - no data returned");
+    return data;
   }
 
   async updateUserOnlineStatus(userId: string, isOnline: boolean): Promise<void> {
     const { error } = await supabase
       .from("users")
-      .update({ isonline: isOnline, lastseen: new Date().toISOString() })
+      .update({ is_online: isOnline, last_seen: new Date().toISOString() })
       .eq("id", userId);
     if (error) throw error;
   }
@@ -64,9 +67,18 @@ export class DbStorage {
       .from("rooms")
       .select("*")
       .eq("id", id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
+  }
+
+  async getRooms(): Promise<Room[]> {
+    const { data, error } = await supabase
+      .from("rooms")
+      .select("*")
+      .order("created_at", { ascending: true });
+    if (error) throw error;
+    return data ?? [];
   }
 
   async createRoom(insertRoom: InsertRoom, creatorId: string): Promise<Room> {
@@ -75,29 +87,24 @@ export class DbStorage {
       .insert({
         id: insertRoom.id,
         name: insertRoom.name,
-        avatarUrl: insertRoom.avatarUrl ?? null,
+        avatar_url: insertRoom.avatarUrl ?? null,
         description: insertRoom.description ?? null,
         type: insertRoom.type ?? "public",
         owner_id: creatorId,
         created_at: new Date().toISOString(),
+        is_active: true,
+        last_activity: new Date().toISOString(),
       })
       .select()
-      .single();
-    if (error) throw error;
-    return data!;
-  }
-async getRooms(): Promise<Room[]> {
-    const { data, error } = await supabase
-      .from("rooms")
-      .select("*")
-      .order("createdAt", { ascending: true });
-    if (error) throw error;
-    return data ?? [];
-  }
+      .maybeSingle();
 
+    if (error) throw error;
+    if (!data) throw new Error("Failed to create room - no data returned");
+    return data;
+  }
 
   async deleteRoom(id: string): Promise<void> {
-    await supabase.from("room_participants").delete().eq("roomid", id);
+    await supabase.from("room_participants").delete().eq("room_id", id);
     const { error } = await supabase.from("rooms").delete().eq("id", id);
     if (error) throw error;
   }
@@ -107,7 +114,7 @@ async getRooms(): Promise<Room[]> {
     const { data, error } = await supabase
       .from("room_participants")
       .select("*")
-      .eq("roomid", roomId);
+      .eq("room_id", roomId);
     if (error) throw error;
     return data ?? [];
   }
@@ -116,31 +123,44 @@ async getRooms(): Promise<Room[]> {
     const { data, error } = await supabase
       .from("room_participants")
       .insert({
-        roomid: insertParticipant.roomId,
-        userid: insertParticipant.userId,
+        room_id: insertParticipant.roomId,
+        user_id: insertParticipant.userId,
         role: insertParticipant.role ?? "user",
       })
       .select()
-      .single();
+      .maybeSingle();
+
     if (error) throw error;
-    return data!;
+    if (!data) throw new Error("Failed to add participant - no data returned");
+    return data;
   }
 
   async removeRoomParticipant(roomId: string, userId: string): Promise<void> {
     const { error } = await supabase
       .from("room_participants")
       .delete()
-      .match({ roomid: roomId, userid: userId });
+      .match({ room_id: roomId, user_id: userId });
     if (error) throw error;
   }
 
   async getRoomParticipant(roomId: string, userId: string): Promise<RoomParticipant | null> {
+    console.log('getRoomParticipant - roomId:', roomId, 'userId:', userId);
+    
+    // Vérifier que userId n'est pas undefined
+    if (!userId || userId === 'undefined') {
+      console.error('UserId invalide dans getRoomParticipant:', userId);
+      throw new Error('UserId invalide');
+    }
+    
     const { data, error } = await supabase
       .from("room_participants")
       .select("*")
-      .match({ roomid: roomId, userid: userId })
-      .single();
-    if (error) throw error;
+      .match({ room_id: roomId, user_id: userId })
+      .maybeSingle();
+    if (error) {
+      console.error('Erreur getRoomParticipant:', error);
+      throw error;
+    }
     return data;
   }
 
@@ -149,7 +169,7 @@ async getRooms(): Promise<Room[]> {
     const { data, error } = await supabase
       .from("messages")
       .select("*")
-      .eq("roomid", roomId)
+      .eq("room_id", roomId)
       .order("timestamp", { ascending: true });
     if (error) throw error;
     return data ?? [];
@@ -159,23 +179,43 @@ async getRooms(): Promise<Room[]> {
     const { data, error } = await supabase
       .from("messages")
       .insert({
-        roomid: insertMessage.roomId,
-        senderid: insertMessage.userId,
+        room_id: insertMessage.roomId,
+        sender_id: insertMessage.userId,
         content: insertMessage.content,
         type: insertMessage.type ?? "user",
+        image_url: insertMessage.imageUrl ?? null,
         timestamp: new Date().toISOString(),
       })
       .select()
-      .single();
+      .maybeSingle();
+
     if (error) throw error;
-    return data!;
+    if (!data) throw new Error("Failed to create message - no data returned");
+    return data;
   }
 
   async deleteMessage(id: string): Promise<void> {
     const { error } = await supabase.from("messages").delete().eq("id", id);
     if (error) throw error;
   }
+
+  async deleteRoomMessages(roomId: string): Promise<void> {
+    const { error } = await supabase.from("messages").delete().eq("room_id", roomId);
+    if (error) throw error;
+  }
+
+  async deleteRoom(roomId: string): Promise<void> {
+    const { error } = await supabase.from("rooms").delete().eq("id", roomId);
+    if (error) throw error;
+  }
+
+  async updateRoomParticipantRole(roomId: string, userId: string, role: 'admin' | 'user'): Promise<void> {
+    const { error } = await supabase
+      .from("room_participants")
+      .update({ role })
+      .match({ room_id: roomId, user_id: userId });
+    if (error) throw error;
+  }
 }
 
-// Export global
 export const storage = new DbStorage();

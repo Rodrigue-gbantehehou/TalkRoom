@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User } from 'lucide-react';
+import { User, Loader2 } from 'lucide-react';
+import { authService } from '@/lib/auth';
 import logoUrl from '@assets/tallk_room copieFF_1757358775756.png';
 
 interface UserSetupProps {
@@ -11,7 +12,8 @@ interface UserSetupProps {
 
 export function UserSetup({ onComplete }: UserSetupProps) {
   const [username, setUsername] = useState('');
-  const [errors, setErrors] = useState<{ username?: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ username?: string; general?: string }>({});
 
   const validateForm = () => {
     const newErrors: { username?: string } = {};
@@ -28,14 +30,40 @@ export function UserSetup({ onComplete }: UserSetupProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
       const cleanUsername = username.trim();
-      onComplete({ 
-        username: cleanUsername, 
-        displayName: cleanUsername 
+      
+      // Créer un compte avec email fictif pour Supabase
+      const email = `${cleanUsername}@talkroom.local`;
+      const password = `temp_${cleanUsername}_${Date.now()}`; // Mot de passe temporaire
+      
+      const result = await authService.signup({
+        email,
+        password,
+        displayName: cleanUsername
       });
+
+      if (result.success && result.user) {
+        // L'utilisateur est maintenant créé et authentifié
+        onComplete({
+          username: result.user.username,
+          displayName: result.user.displayName
+        });
+      } else {
+        setErrors({ general: result.message || 'Erreur lors de la création du compte' });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création du compte:', error);
+      setErrors({ general: 'Erreur de connexion au serveur' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,6 +85,12 @@ export function UserSetup({ onComplete }: UserSetupProps) {
         </CardHeader>
         <CardContent className="px-8 pb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {errors.general && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                <p className="text-red-600 dark:text-red-400 text-sm font-medium">{errors.general}</p>
+              </div>
+            )}
+            
             <div className="space-y-2">
               <label htmlFor="username" className="block text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200">
                 Choisissez votre pseudo
@@ -68,11 +102,12 @@ export function UserSetup({ onComplete }: UserSetupProps) {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  disabled={isLoading}
                   className={`pl-12 h-14 text-lg rounded-xl border-2 transition-all duration-200 ${
                     errors.username 
                       ? 'border-red-400 focus:border-red-500' 
                       : 'border-gray-200 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400'
-                  } bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-750`}
+                  } bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-750 disabled:opacity-50`}
                   placeholder="MonPseudo"
                   data-testid="input-username"
                 />
@@ -84,10 +119,18 @@ export function UserSetup({ onComplete }: UserSetupProps) {
 
             <Button 
               type="submit" 
-              className="w-full h-14 text-lg gradient-primary hover:opacity-90 shadow-lg font-semibold text-white transition-all duration-200 transform hover:scale-[1.02] rounded-xl"
+              disabled={isLoading}
+              className="w-full h-14 text-lg gradient-primary hover:opacity-90 shadow-lg font-semibold text-white transition-all duration-200 transform hover:scale-[1.02] rounded-xl disabled:opacity-50 disabled:transform-none"
               data-testid="button-continue"
             >
-              Commencer à discuter
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  Création du compte...
+                </>
+              ) : (
+                'Commencer à discuter'
+              )}
             </Button>
           </form>
           

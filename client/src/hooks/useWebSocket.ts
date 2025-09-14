@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { WS_URL } from '../config';
 
 interface UseWebSocketProps {
   onMessage?: (data: any) => void;
@@ -13,14 +14,13 @@ export function useWebSocket({ onMessage, onOpen, onClose, onError }: UseWebSock
   const maxReconnectAttempts = 3;
   const isConnecting = useRef(false);
 
-  const connect = useCallback(() => {
+  const connect = useCallback((token?: string) => {
     if (ws.current?.readyState === WebSocket.OPEN || isConnecting.current) {
       return;
     }
 
     isConnecting.current = true;
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const wsUrl = token ? `${WS_URL}/?token=${token}` : `${WS_URL}/ws`;
     
     console.log('Attempting WebSocket connection to:', wsUrl);
     

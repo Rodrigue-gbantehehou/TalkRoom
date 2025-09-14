@@ -388,14 +388,23 @@ export function ChatRoom({ roomCode, username, role, onLeave }: ChatRoomProps) {
         {/* Header */}
         <header className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 md:p-6 relative">
           <div className="flex items-center justify-between">
-            {/* Menu Button - Mobile Only */}
-            <div className="flex items-center gap-3 lg:hidden">
+            {/* Back Button & Menu - Mobile */}
+            <div className="flex items-center gap-2 lg:hidden">
+              <Button
+                onClick={onLeave}
+                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors"
+                data-testid="button-back-mobile"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </Button>
               <Button
                 onClick={() => setShowMenu(!showMenu)}
-                className="bg-white/20 hover:bg-white/30 p-3 rounded-xl transition-colors"
+                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors"
                 data-testid="button-menu"
               >
-                <div className="flex flex-col space-y-1 w-5 h-4 justify-center">
+                <div className="flex flex-col space-y-1 w-4 h-3 justify-center">
                   <div className="h-0.5 bg-white rounded"></div>
                   <div className="h-0.5 bg-white rounded"></div>
                   <div className="h-0.5 bg-white rounded"></div>
