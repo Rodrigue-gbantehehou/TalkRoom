@@ -103,12 +103,6 @@ export class DbStorage {
     return data;
   }
 
-  async deleteRoom(id: string): Promise<void> {
-    await supabase.from("room_participants").delete().eq("room_id", id);
-    const { error } = await supabase.from("rooms").delete().eq("id", id);
-    if (error) throw error;
-  }
-
   // === PARTICIPANTS ===
   async getRoomParticipants(roomId: string): Promise<RoomParticipant[]> {
     const { data, error } = await supabase

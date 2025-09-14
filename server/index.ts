@@ -70,8 +70,8 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const host = "127.0.0.1";
-  const port = parseInt(process.env.PORT || "8000", 10);
+  const host = "0.0.0.0";
+  const port = parseInt(process.env.PORT || "3000", 10);
   console.log("SUPABASE_URL:", process.env.SUPABASE_URL);
   console.log("SUPABASE_SERVICE_KEY:", process.env.SUPABASE_SERVICE_KEY);
 
