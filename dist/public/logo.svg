@@ -1,0 +1,13 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background square with rounded corners -->
+  <rect width="64" height="64" rx="12" fill="#1E40FF"/>
+  
+  <!-- White chat bubble circle -->
+  <circle cx="32" cy="32" r="18" fill="white"/>
+  
+  <!-- Blue "T" shape inside the circle -->
+  <path d="M24 22h16v4h-6v12h-4V26h-6v-4z" fill="#1E40FF"/>
+  
+  <!-- Small chat bubble tail -->
+  <path d="M20 44l6-6h-4c-1.1 0-2-.9-2-2v-2l-2 2c-1.1 1.1-1.1 2.9 0 4l2 2z" fill="white"/>
+</svg>
