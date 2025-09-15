@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/lib/auth";
 import { User, Lock, Eye, EyeOff, MessageCircle, Sparkles } from "lucide-react";
-import logoUrl from '@assets/tallk_room copieFF_1757358775756.png';
 
 interface AuthFormProps {
   onAuthSuccess: (user: { id: string; username: string; displayName: string }) => void;
@@ -81,33 +80,33 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-2 sm:p-4 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute -top-20 -right-20 sm:-top-40 sm:-right-40 w-40 h-40 sm:w-80 sm:h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-20 -left-20 sm:-bottom-40 sm:-left-40 w-40 h-40 sm:w-80 sm:h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-96 sm:h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
       
-      <Card className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl overflow-hidden relative z-10">
-        <CardHeader className="text-center pb-6 pt-8 px-8">
-          <div className="flex items-center justify-center mb-6 relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl blur opacity-75 animate-pulse"></div>
-            <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-2xl">
-              <MessageCircle className="w-8 h-8 text-white" />
+      <Card className="w-full max-w-md mx-2 sm:mx-0 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl sm:rounded-3xl overflow-hidden relative z-10">
+        <CardHeader className="text-center pb-4 sm:pb-6 pt-6 sm:pt-8 px-4 sm:px-8">
+          <div className="flex items-center justify-center mb-4 sm:mb-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl sm:rounded-2xl blur opacity-75 animate-pulse"></div>
+            <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <img src="/logo.svg" alt="TalkRoom Logo" className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center justify-center gap-2">
             TalkRoom
-            <Sparkles className="w-6 h-6 text-purple-400 animate-pulse" />
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400 animate-pulse" />
           </CardTitle>
-          <p className="text-gray-300 text-lg font-medium">
+          <p className="text-gray-300 text-base sm:text-lg font-medium">
             {mode === "login" ? "Bon retour parmi nous !" : "Rejoignez la communauté"}
           </p>
         </CardHeader>
         
-        <CardContent className="px-8 pb-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="px-4 sm:px-8 pb-6 sm:pb-8">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-semibold mb-3 text-white">
                 Email
@@ -122,7 +121,7 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
                     setEmail(e.target.value);
                     if (errors.email) setErrors(prev => ({ ...prev, email: undefined }));
                   }}
-                  className={`pl-12 h-14 text-lg rounded-xl border-2 transition-all duration-300 ${
+                  className={`pl-12 h-12 sm:h-14 text-base sm:text-lg rounded-xl border-2 transition-all duration-300 ${
                     errors.email 
                       ? 'border-red-400 focus:border-red-500 bg-red-500/10' 
                       : 'border-white/20 focus:border-purple-400 hover:border-white/30'
@@ -152,7 +151,7 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
                       setDisplayName(e.target.value);
                       if (errors.displayName) setErrors(prev => ({ ...prev, displayName: undefined }));
                     }}
-                    className={`pl-12 h-14 text-lg rounded-xl border-2 transition-all duration-300 ${
+                    className={`pl-12 h-12 sm:h-14 text-base sm:text-lg rounded-xl border-2 transition-all duration-300 ${
                       errors.displayName 
                         ? 'border-red-400 focus:border-red-500 bg-red-500/10' 
                         : 'border-white/20 focus:border-purple-400 hover:border-white/30'
@@ -182,7 +181,7 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
                     setPassword(e.target.value);
                     if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
                   }}
-                  className={`pl-12 pr-12 h-14 text-lg rounded-xl border-2 transition-all duration-300 ${
+                  className={`pl-12 pr-12 h-12 sm:h-14 text-base sm:text-lg rounded-xl border-2 transition-all duration-300 ${
                     errors.password 
                       ? 'border-red-400 focus:border-red-500 bg-red-500/10' 
                       : 'border-white/20 focus:border-purple-400 hover:border-white/30'
@@ -207,7 +206,7 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
 
             <Button
               type="submit"
-              className="w-full h-14 text-lg font-semibold rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-purple-500/25 relative overflow-hidden group"
+              className="w-full h-12 sm:h-14 text-base sm:text-lg font-semibold rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-purple-500/25 relative overflow-hidden group"
               disabled={isLoading}
               data-testid="button-submit"
             >
@@ -223,7 +222,7 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
             </Button>
           </form>
           
-          <div className="mt-8 text-center">
+          <div className="mt-6 sm:mt-8 text-center">
             <div className="text-gray-300 text-sm">
               {mode === "login" ? (
                 <span>
