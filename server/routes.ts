@@ -650,8 +650,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Routes messages supprimées - maintenant intégrées dans roomsRouter
 
   // ==================== WEBSOCKET ====================
-  wss.on("connection", (ws: WebSocket) => {
+  wss.on("connection", async (ws: WebSocket, req) => {
     let clientId: string | null = null;
+    // Authentifier via token de requête ?token=...
+    let authedUserId: string | null = null;
+    let authedUsername: string | null = null;
+
+    try {
+      const url = new URL(req.url || "", "http://localhost");
+      const token = url.searchParams.get("token");
+
+      if (!token) {
+        ws.close(1008, "Token requis");
+        return;
+      }
+
+      if (token.startsWith('temp_token_')) {
+        const userId = token.replace('temp_token_', '');
+        const { data: userData, error } = await supabase.auth.admin.getUserById(userId);
+        if (error || !userData?.user) {
+          ws.close(1008, "Token temporaire invalide");
+          return;
+        }
+        authedUserId = userData.user.id;
+        authedUsername = (userData.user.user_metadata as any)?.username || userData.user.email?.split('@')[0] || 'user';
+      } else {
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (error || !user) {
+          ws.close(1008, "Token invalide");
+          return;
+        }
+        authedUserId = user.id;
+        authedUsername = (user.user_metadata as any)?.username || user.email?.split('@')[0] || 'user';
+      }
+    } catch (err) {
+      ws.close(1011, "Erreur d'authentification");
+      return;
+    }
 
     ws.on("message", async (data) => {
       try {
@@ -659,9 +694,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         switch (message.type) {
           case "join_room": {
-            const { userId, username, roomId } = message;
+            const { roomId } = message;
             clientId = randomUUID();
-            connectedClients.set(clientId, { ws, userId, username, roomId });
+            // Toujours utiliser l'identité authentifiée côté serveur
+            connectedClients.set(clientId, { ws, userId: authedUserId!, username: authedUsername!, roomId });
             break;
           }
 

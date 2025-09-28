@@ -70,10 +70,19 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const host = "0.0.0.0";
+  const host = process.env.HOST || "0.0.0.0";
   const port = parseInt(process.env.PORT || "3000", 10);
-  console.log("SUPABASE_URL:", process.env.SUPABASE_URL);
-  console.log("SUPABASE_SERVICE_KEY:", process.env.SUPABASE_SERVICE_KEY);
+
+  // Aide en cas d'erreur de port déjà utilisé
+  server.on('error', (err: any) => {
+    if (err?.code === 'EADDRINUSE') {
+      console.error(`\n❌ Le port ${port} est déjà utilisé.`);
+      console.error(`➡️  Solutions: \n - Tuer le processus sur le port ${port} (Windows: netstat -ano | findstr :${port} puis taskkill /PID <PID> /F)\n - Ou relancer avec un autre port: cross-env PORT=${port + 1} npm run dev`);
+    } else {
+      console.error('Erreur serveur:', err);
+    }
+    process.exit(1);
+  });
 
   server.listen(port, host, () => {
     log(`Serving on http://${host}:${port}`);

@@ -173,6 +173,11 @@ class AuthService {
     const token = authStorage.getToken();
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   }
+
+  // Exposer le token (utile pour WebSocket)
+  getToken(): string | null {
+    return authStorage.getToken();
+  }
 }
 
 export const authService = new AuthService();

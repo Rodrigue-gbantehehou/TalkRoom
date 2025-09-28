@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Send, Copy, Clock, Trash2, Users, Share, Shield } from 'lucide-react';
 import { authService } from '@/lib/auth';
-import { API_URL } from '@/config';
+import { API_URL, WS_URL } from '@/config';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -63,7 +63,8 @@ export function SimpleChatRoom({
 
   const initializeWebSocket = () => {
     try {
-      const wsUrl = `ws://127.0.0.1:3000/ws`;
+      const token = authService.getToken();
+      const wsUrl = `${WS_URL}/ws${token ? `?token=${encodeURIComponent(token)}` : ''}`;
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
@@ -71,11 +72,9 @@ export function SimpleChatRoom({
         console.log('WebSocket connecté');
         setIsConnected(true);
         
-        // Rejoindre la room
+        // Rejoindre la room (le serveur déduira l'identité via le token)
         ws.send(JSON.stringify({
           type: 'join_room',
-          userId: currentUser.id,
-          username: currentUser.username,
           roomId: roomCode
         }));
       };

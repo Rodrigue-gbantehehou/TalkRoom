@@ -370,7 +370,7 @@ export function Dashboard({ currentUser, onLogout }: DashboardProps) {
               currentUser={currentUser}
               onBack={() => setSelectedConversationId(null)}
               onCopyLink={() => {
-                navigator.clipboard.writeText(`${window.location.origin}/room/${selectedConversationId}`);
+                navigator.clipboard.writeText(`${window.location.origin}/join/${selectedConversationId}`);
                 toast({ title: 'Lien copié !', description: 'Le lien de la room a été copié dans le presse-papier.' });
               }}
             />
